@@ -1,0 +1,21 @@
+{
+  "name": "nautical-atmosphere",
+  "type": "module",
+  "version": "0.0.1",
+  "homepage": "https://aarleed.github.io",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "dependencies": {
+    "astro": "^2.1.5"
+  },
+  "devDependencies": {
+    "gh-pages": "^5.0.0"
+  }
+}
