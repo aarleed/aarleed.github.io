@@ -15,6 +15,9 @@ permissions:
 
 jobs:
   build:
+    defaults:
+      run:
+        working-directory: aaron
     runs-on: ubuntu-latest
     steps:
     - name: Check out your repository using git
@@ -25,7 +28,7 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: './aaron/package-lock.json'
+        cache-dependency-path: './package-lock.json'
 
     # Not using npm? Change `npm ci` to `yarn install` or `pnpm i`
     - name: Install dependencies
