@@ -9,14 +9,18 @@ const textLinks: { label: string; href: string }[] = [
 	{ label: 'About', href: '/about/' },
 ];
 
+const resumeLink: {label: string; href: string} = 
+	{label: 'Resume', href: 'https://drive.google.com/file/d/1Hkn2QrbGdr-SG1neehXz7phVbrdEQk5B/view?usp=sharing'}
+
+
 /** Icon links to social media — edit these with links to your profiles! */
 const iconLinks: { label: string; href: string; icon: IconProps['icon'] }[] = [
-	{ label: 'Twitter', href: 'https://twitter.com/me', icon: 'twitter-logo' },
-	{ label: 'Twitch', href: 'https://twitch.tv/me', icon: 'twitch-logo' },
-	{ label: 'GitHub', href: 'https://github.com/me', icon: 'github-logo' },
-	{ label: 'CodePen', href: 'https://codepen.io/me', icon: 'codepen-logo' },
-	{ label: 'dribbble', href: 'https://dribbble.com/me', icon: 'dribbble-logo' },
-	{ label: 'YouTube', href: 'https://www.youtube.com/@me/', icon: 'youtube-logo' },
+	// { label: 'Twitter', href: 'https://twitter.com/me', icon: 'twitter-logo' },
+	// { label: 'Twitch', href: 'https://twitch.tv/me', icon: 'twitch-logo' },
+	{ label: 'GitHub', href: 'https://github.com/aarleed', icon: 'github-logo' },
+	// { label: 'CodePen', href: 'https://codepen.io/me', icon: 'codepen-logo' },
+	// { label: 'dribbble', href: 'https://dribbble.com/me', icon: 'dribbble-logo' },
+	// { label: 'YouTube', href: 'https://www.youtube.com/@me/', icon: 'youtube-logo' },
 ];
 ---
 
@@ -24,7 +28,7 @@ const iconLinks: { label: string; href: string; icon: IconProps['icon'] }[] = [
 	<div class="menu-header">
 		<a href="/" class="site-title">
 			<Icon icon="terminal-window" color="var(--accent-regular)" size="1.6em" gradient />
-			Jeanine White
+			Aaron Lee
 		</a>
 		<menu-button>
 			<template>
@@ -56,7 +60,21 @@ const iconLinks: { label: string; href: string; icon: IconProps['icon'] }[] = [
 						</a>
 					</li>
 				))
+				
 			}
+			<!-- { label: 'Resume', href: 'https://drive.google.com/file/d/1Hkn2QrbGdr-SG1neehXz7phVbrdEQk5B/view?usp=sharing'} -->
+			<li>
+				<a
+					aria-current={Astro.url.pathname === resumeLink.label}
+					href={resumeLink.href}
+					class:list={
+						'link'
+					}
+					target="_blank" 
+					rel="noopener noreferrer">
+					Resume
+				</a>
+			</li>
 		</ul>
 		<div class="menu-footer">
 			<div class="socials">
