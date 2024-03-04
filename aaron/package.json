@@ -13,7 +13,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "astro": "^2.1.5"
+    "astro": "^4.4.11"
   },
   "devDependencies": {
     "gh-pages": "^5.0.0"
