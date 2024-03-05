@@ -258,7 +258,7 @@ function endGame() {
 }
 
 function updateHistory(mistakesHistory) {
-  let storedItem = localStorage.getItem(key);
+  let storedItem = localStorage.getItem("history");
   if (storedItem != null) {
     mistakesHistory = JSON.parse(storedItem)
   } 
