@@ -1,23 +1,46 @@
 // import { WORDS } from "./words.js";
 
 // TODO: assume words is populated? might need localStorage
-const WORDS = ["test", "tree", "exam" , "dog", "cat",
-         "book", "bark", "sun", "shine", "pages", "desk", "cabinet"];
+// const WORDS = ["test", "tree", "exam" , "dog", "cat",
+//          "book", "bark", "sun", "shine", "pages", "desk", "drawer"];
+let WORDS1 = ["sleep", "dream", "inspire", "spark", "cages", "jail", "votes", "election", "above", "under", 
+"America", "China", "goal", "target", "farm", "fields"]
+let WORDS = ["mince", "slice", "hotel", "inn", "onion", "shallot", "flag", "patriot", "Vegas", "gamble", "nose", "eye"]
+const MATCHES = new Map();
+for (let i = 0; i<WORDS.length; i+=2) {
+  MATCHES.set(WORDS[i], WORDS[i+1])
+}
+console.log(MATCHES)
+// MATCHES.set('tree', 'bark');
+
+// MATCHES.set('dog', 'cat');
+
+// MATCHES.set('test', 'exam');
+
+// MATCHES.set('sun', 'shine');
+
+// MATCHES.set('book', 'pages');
+
+// MATCHES.set('desk', 'drawer');
+var seed = 1;
+function random() {
+    var x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+shuffleArray(WORDS)
+
 let explored = Array(WORDS.length).fill(false);
 let finished = new Set();
 
-const MATCHES = new Map();
-MATCHES.set('tree', 'bark');
 
-MATCHES.set('dog', 'cat');
-
-MATCHES.set('test', 'exam');
-
-MATCHES.set('sun', 'shine');
-
-MATCHES.set('book', 'pages');
-
-MATCHES.set('desk', 'cabinet');
 
 
 const NUMBER_OF_GUESSES = 3;
@@ -60,6 +83,9 @@ function initBoard() {
   } else {
     newGame(currentDate)
   }
+  if (WORDS.length == finished.size) {
+    endGame(false);
+}
 }
 
 function newGame(currentDate) {
@@ -154,7 +180,6 @@ var cardELS = document.querySelectorAll('.card');
 console.log(cardELS)
 
 const handleClick = (el, index) => {
-  var clickedCard = WORDS[index]
   var cardInnerDiv = el.querySelector('.card-inner');
   flip(cardInnerDiv)
   explore(el, index)
@@ -226,7 +251,7 @@ function updateBoard(card1, card2, i1, i2, correct) {
     let finishedArr = Array.from(finished)
     localStorage.setItem('finished', JSON.stringify(finishedArr))
     if (WORDS.length == finished.size) {
-        endGame();
+        endGame(true);
     }
   } else {
     setTimeout(function () {
@@ -244,17 +269,22 @@ function updateBoard(card1, card2, i1, i2, correct) {
 
 }
 
-function endGame() {
-    setTimeout(function () {
-      cardELS.forEach(function (el) {
-        animateCSS(el, "flipInX");
-      })
+function endGame(animate) {
+    if (animate) {
+      setTimeout(function () {
+        cardELS.forEach(function (el) {
+          animateCSS(el, "flipInX");
+        })
+        let dialog = document.getElementById("game-dialog");
+        dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
+      }, 1500) 
+      // TODO: have history display
+      mistakesHistory = updateHistory(mistakesHistory)
+      localStorage.setItem('history', JSON.stringify(mistakesHistory))
+    } else {
       let dialog = document.getElementById("game-dialog");
       dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
-    }, 1500) 
-    // TODO: have history
-    mistakesHistory = updateHistory(mistakesHistory)
-    localStorage.setItem('history', JSON.stringify(mistakesHistory))
+    }
 }
 
 function updateHistory(mistakesHistory) {
@@ -318,92 +348,6 @@ function deleteLetter() {
   nextLetter -= 1;
 }
 
-// function checkGuess() {
-//   let row = document.getElementsByClassName("letter-row")[6 - guessesRemaining];
-//   let guessString = "";
-//   let rightGuess = Array.from(rightGuessString);
-
-//   for (const val of currentGuess) {
-//     guessString += val;
-//   }
-
-//   if (guessString.length != 5) {
-//     toastr.error("Not enough letters!");
-//     return;
-//   }
-
-//   if (!WORDS.includes(guessString)) {
-//     toastr.error("Word not in list!");
-//     return;
-//   }
-
-//   var letterColor = ["gray", "gray", "gray", "gray", "gray"];
-
-//   //check green
-//   for (let i = 0; i < 5; i++) {
-//     if (rightGuess[i] == currentGuess[i]) {
-//       letterColor[i] = "green";
-//       rightGuess[i] = "#";
-//     }
-//   }
-
-//   //check yellow
-//   //checking guess letters
-//   for (let i = 0; i < 5; i++) {
-//     if (letterColor[i] == "green") continue;
-
-//     //checking right letters
-//     for (let j = 0; j < 5; j++) {
-//       if (rightGuess[j] == currentGuess[i]) {
-//         letterColor[i] = "yellow";
-//         rightGuess[j] = "#";
-//       }
-//     }
-//   }
-
-//   for (let i = 0; i < 5; i++) {
-//     let box = row.children[i];
-//     let delay = 250 * i;
-//     setTimeout(() => {
-//       //flip box
-//       animateCSS(box, "flipInX");
-//       //shade box
-//       box.style.backgroundColor = letterColor[i];
-//       shadeKeyBoard(guessString.charAt(i) + "", letterColor[i]);
-//     }, delay);
-//   }
-
-//   if (guessString === rightGuessString) {
-//     toastr.success("You guessed right! Game over!");
-//     guessesRemaining = 0;
-//     return;
-//   } else {
-//     guessesRemaining -= 1;
-//     currentGuess = [];
-//     nextLetter = 0;
-
-//     if (guessesRemaining === 0) {
-//       toastr.error("You've run out of guesses! Game over!");
-//       toastr.info(`The right word was: "${rightGuessString}"`);
-//     }
-//   }
-// }
-
-// function insertLetter(pressedKey) {
-//   if (nextLetter === 5) {
-//     return;
-//   }
-//   pressedKey = pressedKey.toLowerCase();
-
-//   let row = document.getElementsByClassName("letter-row")[6 - guessesRemaining];
-//   let box = row.children[nextLetter];
-//   animateCSS(box, "pulse");
-//   box.textContent = pressedKey;
-//   box.classList.add("filled-box");
-//   currentGuess.push(pressedKey);
-//   nextLetter += 1;
-// }
-
 const animateCSS = (element, animation, prefix = "animate__") =>
   // We create a Promise and return it
   new Promise((resolve, reject) => {
@@ -424,42 +368,4 @@ const animateCSS = (element, animation, prefix = "animate__") =>
     node.addEventListener("animationend", handleAnimationEnd, { once: true });
   });
 
-// document.addEventListener("keyup", (e) => {
-//   if (guessesRemaining === 0) {
-//     return;
-//   }
-
-//   let pressedKey = String(e.key);
-//   if (pressedKey === "Backspace" && nextLetter !== 0) {
-//     deleteLetter();
-//     return;
-//   }
-
-//   if (pressedKey === "Enter") {
-//     checkGuess();
-//     return;
-//   }
-
-//   let found = pressedKey.match(/[a-z]/gi);
-//   if (!found || found.length > 1) {
-//     return;
-//   } else {
-//     insertLetter(pressedKey);
-//   }
-// });
-
-// document.getElementById("keyboard-cont").addEventListener("click", (e) => {
-//   const target = e.target;
-
-//   if (!target.classList.contains("keyboard-button")) {
-//     return;
-//   }
-//   let key = target.textContent;
-
-//   if (key === "Del") {
-//     key = "Backspace";
-//   }
-
-//   document.dispatchEvent(new KeyboardEvent("keyup", { key: key }));
-// });
 

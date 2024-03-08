@@ -62,11 +62,11 @@ body {
      .card {
        border-radius: 3px;
        margin: 2px;
-       font-size: 1.5rem;
+       font-size: 1.3em; /* 1.5rem; */
        color: #fff;
        font-weight: 700;
-       height: 6rem;
-       width: 6rem;
+       height: 7rem;
+       width: 7rem;
        display: flex;
        justify-content: center;
        align-items: center;
@@ -111,7 +111,7 @@ body {
      
      .letter-row {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       justify-content: center;
       width: 100%;
      }
