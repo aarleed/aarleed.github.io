@@ -135,10 +135,14 @@ function initState(previous) {
       card.appendChild(cardInner)
       let cardFront = document.createElement("div")
       cardFront.className = "card-front"
+      // let cardText = document.createElement("div")
+      // cardText.className = "card-text"
+      // cardText.textContent =  WORDS[i*4 + j]
       cardFront.textContent = WORDS[i*4 + j]
       let cardBack = document.createElement("div")
       cardBack.className = "card-back"
       cardBack.textContent = WORDS[i*4 + j]
+      // cardFront.appendChild(cardText); cardBack.appendChild(cardText);
       cardInner.appendChild(cardFront)
       cardInner.appendChild(cardBack)
       if (previous) {
