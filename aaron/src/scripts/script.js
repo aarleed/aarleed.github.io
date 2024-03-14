@@ -69,6 +69,7 @@ function initBoard() {
     if (isNextDay(lastDate, currentDate)) {
       // start new game
       console.log('new date new game')
+      newGame(currentDate)
       // TODO: start a new game
     }
     else if (localStorage.key('explored') != null) {
@@ -138,7 +139,7 @@ function initState(previous) {
       // let cardText = document.createElement("div")
       // cardText.className = "card-text"
       // cardText.textContent =  WORDS[i*4 + j]
-      cardFront.textContent = WORDS[i*4 + j]
+      // cardFront.textContent = WORDS[i*4 + j]
       let cardBack = document.createElement("div")
       cardBack.className = "card-back"
       cardBack.textContent = WORDS[i*4 + j]
