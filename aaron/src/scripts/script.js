@@ -51,10 +51,14 @@ let rightGuessString = WORDS[Math.floor(Math.random() * WORDS.length)];
 let eventListeners = [];
 let mistakes = 0;
 let mistakesHistory = {
-  "<6":0,
-  "6-8":0,
-  "9-11":0,
-  "12+":0
+  "0":0,
+  "1":0,
+  "2":0,
+  "3":0,
+  "4":0,
+  "5":0,
+  "6":0,
+  "7+":0
 }
 let guesses = [];
 
@@ -85,7 +89,7 @@ function initBoard() {
     newGame(currentDate)
   }
   if (WORDS.length == finished.size) {
-    endGame(false);
+    endGame(false, mistakes);
 }
 }
 
@@ -191,7 +195,7 @@ const handleClick = (el, index) => {
 }
 
 cardELS.forEach(function (el, index) {
-  if (!finished.has(index)) {
+  if (!finished.has(index) && mistakes < 7) {
     var listenerFct = function () {handleClick(el, index)}
     eventListeners.push(listenerFct)
     el.addEventListener('click', listenerFct)
@@ -256,7 +260,8 @@ function updateBoard(card1, card2, i1, i2, correct) {
     let finishedArr = Array.from(finished)
     localStorage.setItem('finished', JSON.stringify(finishedArr))
     if (WORDS.length == finished.size) {
-        endGame(true);
+        endGame(true, mistakes);
+        return;
     }
   } else {
     setTimeout(function () {
@@ -268,13 +273,17 @@ function updateBoard(card1, card2, i1, i2, correct) {
       var card2InnerDiv = card2.querySelector('.card-inner');
       flip(card1InnerDiv); flip(card2InnerDiv);
     } , 1700)
+    if (mistakes > 6) {
+      endGame(false, mistakes);
+      return;
+    }
     console.log('animate, update with cards flipped back')
   }
   updateDialog(i1, i2, correct)
 
 }
 
-function endGame(animate) {
+function endGame(animate, mistakes) {
     if (animate) {
       setTimeout(function () {
         cardELS.forEach(function (el) {
@@ -290,6 +299,12 @@ function endGame(animate) {
       let dialog = document.getElementById("game-dialog");
       dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
     }
+    // remove all event listeners
+    var cardELS = document.querySelectorAll('.card');
+    cardELS.forEach(function(card, i) {
+      card.removeEventListener('click', eventListeners[i])
+      console.log('remove card event listener')
+    });
 }
 
 function updateHistory(mistakesHistory) {
@@ -300,24 +315,40 @@ function updateHistory(mistakesHistory) {
   console.log(mistakesHistory)
 
   switch (true) {
-    case mistakes < 6:
-      mistakesHistory['<6'] += 1
+    // too lazy to make this str
+    case mistakes == 1:
+      mistakesHistory['0'] += 1
+      break
+    case mistakes == 1:
+      mistakesHistory['1'] += 1
       break;
-    case mistakes >= 6 && mistakes <= 8:
-      mistakesHistory['6-8'] += 1
+    case mistakes == 2:
+      mistakesHistory['2'] += 1
       break;
-    case mistakes >= 9 && mistakes <= 12:
-      mistakesHistory['9=11'] += 1
+    case mistakes == 3:
+      mistakesHistory['3'] += 1
+      break;
+    case mistakes == 4:
+      mistakesHistory['4'] += 1
+      break;
+    case mistakes == 5:
+      mistakesHistory['5'] += 1
+      break;
+    case mistakes == 6:
+      mistakesHistory['6'] += 1
       break;
     default:
-      console.log("Mistakes is greater than 12");
+      mistakesHistory['7+'] += 1
+      console.log("More than 6");
   }
   return mistakesHistory
 }
 
 function updateDialog(i1, i2, correct) {
   // TODO: save dialog somewhere?
-    let dialog = document.getElementById("game-dialog")
+    let dialog = document.getElementById("game-text")
+    let mistakesDialog = document.getElementById("mistakes")
+    mistakesDialog.textContent = "mistakes: " + mistakes;
     if (correct) {
       dialog.textContent = WORDS[i1] + " and " + WORDS[i2] + " are a pair! Nice job!"
     } else {

@@ -51,6 +51,7 @@ body {
   
      #game-dialog {
       display: flex;
+      flex-direction: column;
       align-items: center;
       border: #787c7f 2px solid;
       font-size: 0.9rem;
