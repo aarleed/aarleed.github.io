@@ -194,13 +194,19 @@ const handleClick = (el, index) => {
   explore(el, index)
 }
 
-cardELS.forEach(function (el, index) {
-  if (!finished.has(index) && mistakes < 7) {
-    var listenerFct = function () {handleClick(el, index)}
-    eventListeners.push(listenerFct)
-    el.addEventListener('click', listenerFct)
-  }
-})
+function addEventListeners() {
+  cardELS.forEach(function (el, index) {
+    if (!finished.has(index) && mistakes < 7) {
+      var listenerFct = function () {handleClick(el, index)}
+      eventListeners.push(listenerFct)
+      el.addEventListener('click', listenerFct)
+    }
+  })
+}
+
+// add eventListeners after board initialization
+addEventListeners()
+
 
 function check(guesses) {
     let card1 = guesses[0][0]
@@ -267,12 +273,20 @@ function updateBoard(card1, card2, i1, i2, correct) {
     setTimeout(function () {
       animateCSS(card1, "headShake"); animateCSS(card2, "headShake")
     }, 300)
-    
+    // add locking
+    removeAllListeners()
     setTimeout( function () {
       var card1InnerDiv = card1.querySelector('.card-inner');
       var card2InnerDiv = card2.querySelector('.card-inner');
       flip(card1InnerDiv); flip(card2InnerDiv);
-    } , 1700)
+      // add back event listeners
+      var cardELS = document.querySelectorAll('.card');
+      cardELS.forEach(function (el, index) {
+        if (!finished.has(index) && mistakes < 7) {
+          el.addEventListener('click', eventListeners[index])
+        }
+      })
+    } , 1000)
     if (mistakes > 6) {
       endGame(false, mistakes);
       return;
@@ -299,12 +313,16 @@ function endGame(animate, mistakes) {
       let dialog = document.getElementById("game-dialog");
       dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
     }
-    // remove all event listeners
-    var cardELS = document.querySelectorAll('.card');
-    cardELS.forEach(function(card, i) {
-      card.removeEventListener('click', eventListeners[i])
-      console.log('remove card event listener')
-    });
+    removeAllListeners()
+}
+
+function removeAllListeners () {
+  // remove all event listeners
+  var cardELS = document.querySelectorAll('.card');
+  cardELS.forEach(function(card, i) {
+    card.removeEventListener('click', eventListeners[i])
+    console.log('remove card event listener')
+  });
 }
 
 function updateHistory(mistakesHistory) {
@@ -316,27 +334,10 @@ function updateHistory(mistakesHistory) {
 
   switch (true) {
     // too lazy to make this str
-    case mistakes == 1:
-      mistakesHistory['0'] += 1
+    case mistakes < 7:
+      let key = mistakes.toString()
+      mistakesHistory[key] += 1
       break
-    case mistakes == 1:
-      mistakesHistory['1'] += 1
-      break;
-    case mistakes == 2:
-      mistakesHistory['2'] += 1
-      break;
-    case mistakes == 3:
-      mistakesHistory['3'] += 1
-      break;
-    case mistakes == 4:
-      mistakesHistory['4'] += 1
-      break;
-    case mistakes == 5:
-      mistakesHistory['5'] += 1
-      break;
-    case mistakes == 6:
-      mistakesHistory['6'] += 1
-      break;
     default:
       mistakesHistory['7+'] += 1
       console.log("More than 6");
