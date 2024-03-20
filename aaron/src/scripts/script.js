@@ -127,6 +127,7 @@ function initState(previous) {
     const tempArr = JSON.parse(localStorage.getItem('finished'))
     finished = new Set(tempArr);
     mistakes = JSON.parse(localStorage.getItem('statistics'))
+    mistakesHistory = JSON.parse(localStorage.getItem('history'))
   }
   let board = document.getElementById("game-board");
   for (let i = 0; i < NUMBER_OF_GUESSES; i++) {
@@ -189,7 +190,7 @@ function calculateWinPerc(mistakesHistory) {
   // Calculate the sum of keys 1-6
   let sumKeys1To6 = 0;
   for (let key in mistakesHistory) {
-    if (parseInt(key) >= 1 && parseInt(key) <= 6) {
+    if (parseInt(key) >= 0 && parseInt(key) <= 6) {
       sumKeys1To6 += mistakesHistory[key];
     }
   }
@@ -295,6 +296,8 @@ function updateBoard(card1, card2, i1, i2, correct) {
     let finishedArr = Array.from(finished)
     localStorage.setItem('finished', JSON.stringify(finishedArr))
     if (WORDS.length == finished.size) {
+        mistakesHistory = updateHistory(mistakesHistory)
+        localStorage.setItem('history', JSON.stringify(mistakesHistory))
         endGame(true, mistakes);
         
         return;
@@ -318,6 +321,8 @@ function updateBoard(card1, card2, i1, i2, correct) {
       })
     } , 1000)
     if (mistakes > 6) {
+      mistakesHistory = updateHistory(mistakesHistory)
+      localStorage.setItem('history', JSON.stringify(mistakesHistory))
       endGame(false, mistakes);
       return;
     }
@@ -328,13 +333,15 @@ function updateBoard(card1, card2, i1, i2, correct) {
 }
 
 function endGame(animate, mistakes) {
+  // openModal, removeEventListeners, set game dialog box
   console.log('End Game')
   let tempText = "Statistics: \n" + 
       "Played " + 1 + "\n" +
-      "Win % " + calculateWinPerc(mistakesHistory) + "\n" +
+      "Win % " + calculateWinPerc(mistakesHistory) + "%\n" +
       "Current Streak " + 1 + "\n" +
       "Max Streak " + 1 + "\n" +
       JSON.stringify(mistakesHistory);
+  
   if (animate) {
     setTimeout(function () {
       cardELS.forEach(function (el) {
@@ -349,10 +356,7 @@ function endGame(animate, mistakes) {
     let dialog = document.getElementById("game-dialog");
     dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
     openModal(tempText)
-  }
-  // TODO: have history display
-  mistakesHistory = updateHistory(mistakesHistory)
-  localStorage.setItem('history', JSON.stringify(mistakesHistory))
+  }  
   removeAllListeners()
 }
 
