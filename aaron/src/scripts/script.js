@@ -209,15 +209,6 @@ initBoard();
 
 if (localStorage.getItem('noIntro')) {
   // skip intro
-  if (WORDS.length == finished.size || mistakes > 6) {
-    let tempText = "Statistics: \n" + 
-      "Played " + 1 + "\n" +
-      "Win % " + calculateWinPerc(mistakesHistory) + "\n" +
-      "Current Streak " + 1 + "\n" +
-      "Max Streak " + 1 + "\n" +
-      JSON.stringify(mistakesHistory);
-    openModal(tempText)
-  }
 } else {
   openModal();
   localStorage.setItem('noIntro', 'true')
@@ -305,6 +296,7 @@ function updateBoard(card1, card2, i1, i2, correct) {
     localStorage.setItem('finished', JSON.stringify(finishedArr))
     if (WORDS.length == finished.size) {
         endGame(true, mistakes);
+        
         return;
     }
   } else {
@@ -337,23 +329,31 @@ function updateBoard(card1, card2, i1, i2, correct) {
 
 function endGame(animate, mistakes) {
   console.log('End Game')
-    if (animate) {
-      setTimeout(function () {
-        cardELS.forEach(function (el) {
-          animateCSS(el, "flipInX");
-        })
-        let dialog = document.getElementById("game-dialog");
-        dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
-      }, 1500) 
-      
-    } else {
+  let tempText = "Statistics: \n" + 
+      "Played " + 1 + "\n" +
+      "Win % " + calculateWinPerc(mistakesHistory) + "\n" +
+      "Current Streak " + 1 + "\n" +
+      "Max Streak " + 1 + "\n" +
+      JSON.stringify(mistakesHistory);
+  if (animate) {
+    setTimeout(function () {
+      cardELS.forEach(function (el) {
+        animateCSS(el, "flipInX");
+      })
       let dialog = document.getElementById("game-dialog");
       dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
-    }
-    // TODO: have history display
-    mistakesHistory = updateHistory(mistakesHistory)
-    localStorage.setItem('history', JSON.stringify(mistakesHistory))
-    removeAllListeners()
+      openModal(tempText)
+    }, 1000) 
+    
+  } else {
+    let dialog = document.getElementById("game-dialog");
+    dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
+    openModal(tempText)
+  }
+  // TODO: have history display
+  mistakesHistory = updateHistory(mistakesHistory)
+  localStorage.setItem('history', JSON.stringify(mistakesHistory))
+  removeAllListeners()
 }
 
 function removeAllListeners () {
