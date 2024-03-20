@@ -88,9 +88,11 @@ function initBoard() {
   } else {
     newGame(currentDate)
   }
+  let mistakesDialog = document.getElementById("mistakes")
+  mistakesDialog.textContent = "mistakes: " + mistakes;
   if (WORDS.length == finished.size) {
     endGame(false, mistakes);
-}
+  }
 }
 
 function newGame(currentDate) {
@@ -174,15 +176,51 @@ function openModal(content=null) {
       modal.style.display = "none";
     }
   }
-  localStorage.setItem('noIntro', 'true')
+  if (content) {
+      
+      let modalTextContent = document.getElementById('modal-text')
+
+      modalTextContent.textContent = content;
+  }
+  
+}
+
+function calculateWinPerc(mistakesHistory) {
+  // Calculate the sum of keys 1-6
+  let sumKeys1To6 = 0;
+  for (let key in mistakesHistory) {
+    if (parseInt(key) >= 1 && parseInt(key) <= 6) {
+      sumKeys1To6 += mistakesHistory[key];
+    }
+  }
+
+  // Calculate the total sum of all keys
+  let totalSum = 0;
+  for (let key in mistakesHistory) {
+    totalSum += mistakesHistory[key];
+  }
+
+  // Calculate the win percentage
+  let winPercentage = sumKeys1To6 / totalSum * 100;
+  return winPercentage
 }
 
 initBoard();
 
 if (localStorage.getItem('noIntro')) {
   // skip intro
+  if (WORDS.length == finished.size || mistakes > 6) {
+    let tempText = "Statistics: \n" + 
+      "Played " + 1 + "\n" +
+      "Win % " + calculateWinPerc(mistakesHistory) + "\n" +
+      "Current Streak " + 1 + "\n" +
+      "Max Streak " + 1 + "\n" +
+      JSON.stringify(mistakesHistory);
+    openModal(tempText)
+  }
 } else {
   openModal();
+  localStorage.setItem('noIntro', 'true')
 }
 
 var cardELS = document.querySelectorAll('.card');
@@ -196,9 +234,9 @@ const handleClick = (el, index) => {
 
 function addEventListeners() {
   cardELS.forEach(function (el, index) {
+    var listenerFct = function () {handleClick(el, index)}
+    eventListeners.push(listenerFct)
     if (!finished.has(index) && mistakes < 7) {
-      var listenerFct = function () {handleClick(el, index)}
-      eventListeners.push(listenerFct)
       el.addEventListener('click', listenerFct)
     }
   })
@@ -298,6 +336,7 @@ function updateBoard(card1, card2, i1, i2, correct) {
 }
 
 function endGame(animate, mistakes) {
+  console.log('End Game')
     if (animate) {
       setTimeout(function () {
         cardELS.forEach(function (el) {
@@ -306,13 +345,14 @@ function endGame(animate, mistakes) {
         let dialog = document.getElementById("game-dialog");
         dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
       }, 1500) 
-      // TODO: have history display
-      mistakesHistory = updateHistory(mistakesHistory)
-      localStorage.setItem('history', JSON.stringify(mistakesHistory))
+      
     } else {
       let dialog = document.getElementById("game-dialog");
       dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
     }
+    // TODO: have history display
+    mistakesHistory = updateHistory(mistakesHistory)
+    localStorage.setItem('history', JSON.stringify(mistakesHistory))
     removeAllListeners()
 }
 
@@ -330,7 +370,6 @@ function updateHistory(mistakesHistory) {
   if (storedItem != null) {
     mistakesHistory = JSON.parse(storedItem)
   } 
-  console.log(mistakesHistory)
 
   switch (true) {
     // too lazy to make this str
