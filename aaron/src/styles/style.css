@@ -4,6 +4,18 @@ body {
   h1 {
       text-align: center;
   }
+  #game-statistics {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    /* background-color: blue; */
+  }
+  
+  .game-stat {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
   
   .modal-class {
     display: none; /* Hidden by default */
@@ -59,6 +71,7 @@ body {
       margin: 0.5rem;
       justify-content: center;
      }
+
      
      .card {
        border-radius: 3px;
