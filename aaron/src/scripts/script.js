@@ -51,14 +51,14 @@ let rightGuessString = WORDS[Math.floor(Math.random() * WORDS.length)];
 let eventListeners = [];
 let mistakes = 0;
 let mistakesHistory = {
-  "0":0,
-  "1":0,
-  "2":0,
-  "3":0,
-  "4":0,
-  "5":0,
-  "6":0,
-  "7+":0
+  "0:":0,
+  "1:":0,
+  "2:":0,
+  "3:":0,
+  "4:":0,
+  "5:":0,
+  "6:":0,
+  "7+:":0
 }
 let guesses = [];
 
@@ -90,7 +90,7 @@ function initBoard() {
   }
   let mistakesDialog = document.getElementById("mistakes")
   mistakesDialog.textContent = "mistakes: " + mistakes;
-  if (WORDS.length == finished.size) {
+  if (WORDS.length == finished.size || mistakes>6) {
     endGame(false, mistakes);
   }
 }
@@ -178,12 +178,59 @@ function openModal(content=null) {
     }
   }
   if (content) {
-      
       let modalTextContent = document.getElementById('modal-text')
-
       modalTextContent.textContent = content;
+
+      // TODO: replace placeholders
+      let gameStats = document.getElementById('game-statistics')
+      gameStats.appendChild(createStatistic("Played", 1))
+      gameStats.appendChild(createStatistic("Win %", calculateWinPerc(mistakesHistory) + "%"))
+      gameStats.appendChild(createStatistic("Current Streak", 1))
+      gameStats.appendChild(createStatistic("Max Streak", 1))
+
+      // make graph
+      var data = [{
+        type: 'bar',
+        x: Object.values(mistakesHistory),
+        y: Object.keys(mistakesHistory), 
+        orientation: 'h'
+      }];
+      console.log(data)
+      var layout = {
+        title: 'Mistakes Distribution',
+        yaxis: {
+          title: {
+            text: 'Mistakes'
+          },
+        },
+      };
+      
+      Plotly.newPlot('graph', data, layout);
   }
-  
+}
+
+function createStatistic(text, statistic) {
+  // Create a container div
+  let container = document.createElement("div");
+  container.className = "game-stat";
+  container.style.textAlign = 'center';
+
+  // Create a div for the text
+  let textDiv = document.createElement('stat-text');
+  textDiv.textContent = text;
+  textDiv.style.fontWeight = 'bold'; // Adjust styles as needed
+
+  // Create a div for the statistic
+  let statisticDiv = document.createElement('stat');
+  statisticDiv.textContent = statistic;
+  statisticDiv.style.fontWeight = 'bold'; // Adjust styles as needed
+
+  // Append the text and statistic divs to the container
+  container.appendChild(textDiv);
+  container.appendChild(statisticDiv);
+
+  // Return the container div
+  return container;
 }
 
 function calculateWinPerc(mistakesHistory) {
@@ -335,12 +382,7 @@ function updateBoard(card1, card2, i1, i2, correct) {
 function endGame(animate, mistakes) {
   // openModal, removeEventListeners, set game dialog box
   console.log('End Game')
-  let tempText = "Statistics: \n" + 
-      "Played " + 1 + "\n" +
-      "Win % " + calculateWinPerc(mistakesHistory) + "%\n" +
-      "Current Streak " + 1 + "\n" +
-      "Max Streak " + 1 + "\n" +
-      JSON.stringify(mistakesHistory);
+  let tempText = "Statistics:"
   
   if (animate) {
     setTimeout(function () {
@@ -376,13 +418,12 @@ function updateHistory(mistakesHistory) {
   } 
 
   switch (true) {
-    // too lazy to make this str
     case mistakes < 7:
-      let key = mistakes.toString()
+      let key = mistakes.toString() + ":"
       mistakesHistory[key] += 1
       break
     default:
-      mistakesHistory['7+'] += 1
+      mistakesHistory['7+:'] += 1
       console.log("More than 6");
   }
   return mistakesHistory
