@@ -4,7 +4,7 @@ publishDate: 2020-07-04 00:00:00
 img: /assets/CNNResult.png
 img_alt: Generated Pokemon CNN picture
 description: |
-  Pokemon with GANs! ... before Diffusion Models
+  Pokemon with GANs! (made in 2020) ... before Diffusion Models
 tags:
   - Generative AI
   - Python
@@ -13,7 +13,7 @@ tags:
 ---
 
 ## Motivation
-I like Pokemon and I like AI... can I try to create Pokemon using AI?
+I like Pokemon and I like AI... can I try to create Pokemon using AI? Let's use GANs (2020 before diffusion models popularity)
 
 ## Implementation
 Data Augmentation is first needed due to limitations in the dataset (few images): this involved re-coloring images. ie. making Pikachu be blue, red in addition to its colors.
