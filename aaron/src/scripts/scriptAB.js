@@ -118,7 +118,7 @@ function initState(previous) {
     const tempArr = JSON.parse(localStorage.getItem('finished'))
     finished = new Set(tempArr);
     mistakes = JSON.parse(localStorage.getItem('statistics'))
-    mistakesHistory = JSON.parse(localStorage.getItem('history'))
+    if (localStorage.getItem('history') != null) {mistakesHistory = JSON.parse(localStorage.getItem('history'))}
   }
   let board = document.getElementById("game-board");
   for (let i = 0; i < NUMBER_OF_GUESSES; i++) {
@@ -249,7 +249,7 @@ initBoard();
 if (localStorage.getItem('noIntro')) {
   // skip intro
 } else {
-  openModal();
+  // openModal();
   localStorage.setItem('noIntro', 'true')
 }
 
@@ -382,7 +382,7 @@ function endGame(animate, mistakes) {
       })
       let dialog = document.getElementById("game-dialog");
       dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
-      openModal(tempText)
+      setTimeout(function () {openModal(tempText)}, 1000)
     }, 1000) 
     
   } else {
