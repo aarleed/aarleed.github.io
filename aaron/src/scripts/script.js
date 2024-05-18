@@ -3,6 +3,23 @@
 // TODO: assume words is populated? might need localStorage
 // const WORDS = ["test", "tree", "exam" , "dog", "cat",
 //          "book", "bark", "sun", "shine", "pages", "desk", "drawer"];
+
+const WORDSDICT = new Map([
+  [0, ['dog', 'hound', 'tail', 'behind', 'bum', 'ass', 'sleazy', 'punk', 'hood', 'gang', 'cheap', 'tacky']],
+  [1, ['odor', 'smell', 'perfume', 'essence', 'effect', 'outcome', 'issue', 'topic', 'core', 'centre', 'heart', 'spirit']],
+  [2, ['measure', 'meter', 'value', 'rate', 'prize', 'award', 'loot', 'booty', 'plunder', 'ransack', 'strip', 'peel']],
+  [3, ['prarie', 'savanna', 'grass', 'pot', 'toilet', 'sewer', 'water', 'ocean', 'skunk', 'rat', 'hog', 'slob']],
+  [4, ['computer', 'game', 'cypher', 'decode', 'program', 'code', 'recurse', 'repeat', 'share', 'portion', 'contact', 'meet' ]],
+  [5, ['march', 'parade', 'exhibit', 'show', 'museum', ]],
+  [6, ['hex', 'spell', 'witch', 'goblin', 'dwarf', 'short', 'brief', 'lightning', 'fading', 'dim', 'bleach', 'white']],
+  [7, ['encourage', 'animate', 'cartoon', 'film', 'stream', 'Twitch', 'mist', 'haze', 'moisture', 'wet', 'tide', 'pod']]
+]);
+
+
+function setWords(date) {
+    var dayOfWeek = date.getDay()
+    return WORDSDICT[dayOfWeek]
+}
 let WORDS1 = ["sleep", "dream", "inspire", "spark", "cages", "jail", "votes", "election", "above", "under", 
 "America", "China", "goal", "target", "farm", "fields"]
 let WORDS = ["mince", "slice", "hotel", "inn", "onion", "shallot", "flag", "patriot", "Vegas", "gamble", "nose", "eye"]
@@ -10,7 +27,6 @@ const MATCHES = new Map();
 for (let i = 0; i<WORDS.length; i+=2) {
   MATCHES.set(WORDS[i], WORDS[i+1])
 }
-console.log(MATCHES)
 // MATCHES.set('tree', 'bark');
 
 // MATCHES.set('dog', 'cat');
@@ -22,20 +38,20 @@ console.log(MATCHES)
 // MATCHES.set('book', 'pages');
 
 // MATCHES.set('desk', 'drawer');
-var seed = 1;
-function random() {
+// TODO: have this set to an int representing the date
+// var seed = 2;
+function random(seed) {
     var x = Math.sin(seed++) * 10000;
     return x - Math.floor(x);
 }
 
-function shuffleArray(array) {
+function shuffleArray(array, seed) {
   for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(random() * (i + 1));
+      const j = Math.floor(random(seed) * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
   }
 }
 
-shuffleArray(WORDS)
 
 let explored = Array(WORDS.length).fill(false);
 let finished = new Set();
@@ -65,12 +81,22 @@ let guesses = [];
 // min game state requires
 // TODO: reset board after 12am
 
+function getDateInt(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+  date = new Date(year, month, day)
+  return date.getTime() / 10000
+}
+
 function initBoard() {
   let lastDate = localStorage.getItem('currentDate');
   const currentDate = new Date()
+  let currentDateInt = getDateInt(currentDate);
+  shuffleArray(WORDS, currentDateInt)
   if (lastDate != null) {
     lastDate = new Date(lastDate)
-    if (isNextDay(lastDate, currentDate)) {
+    if (isDiffDay(lastDate, currentDate)) {
       // start new game
       console.log('new date new game')
       newGame(currentDate)
@@ -106,7 +132,7 @@ function newGame(currentDate) {
   localStorage.setItem('currentDate', currentDate.toISOString())
 }
 
-function isNextDay(date1, date2) {
+function isDiffDay(date1, date2) {
   // Extract year, month, and day from both dates
   const year1 = date1.getFullYear();
   const month1 = date1.getMonth();
@@ -116,8 +142,8 @@ function isNextDay(date1, date2) {
   const month2 = date2.getMonth();
   const day2 = date2.getDate();
 
-  // Check if date2 is exactly one day after date1
-  return year2 === year1 && month2 === month1 && day2 === day1 + 1;
+  // Check if date2 is different than date1
+  return year2 != year1 || month2 != month1 || day2 != day1;
 }
 
 function initState(previous) {
@@ -195,7 +221,6 @@ function openModal(content=null) {
         y: Object.keys(mistakesHistory), 
         orientation: 'h'
       }];
-      console.log(data)
       var layout = {
         title: 'Mistakes Distribution',
         yaxis: {
