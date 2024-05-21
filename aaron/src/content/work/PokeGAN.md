@@ -18,7 +18,7 @@ I like Pokemon and I like AI... can I try to create Pokemon using AI? Let's use 
 ## Implementation
 Data Augmentation is first needed due to limitations in the dataset (few images): this involved re-coloring images. ie. making Pikachu be blue, red in addition to its colors.
 
-The state of the art around the time still revolved around Genertive Adversarial Networks, so this was the main approach used to tackle this problem, specifically using DCGANS (Deep Convolutional Generative Adversarial Networks) the adversarial framwork with Convolutional Neural Networks. I also decided to see the results without using Convolutions and the result is below too, but the colors are much more disconnected (due to the prediction of one pixel location not having much impact on another which is addressed in CNNs). However, interestingly, the shapes of fake Pokemon appear to roughly better than the CNNs
+The state of the art around the time still revolved around Generative Adversarial Networks, so this was the main approach used to tackle this problem, specifically using DCGANS (Deep Convolutional Generative Adversarial Networks) the adversarial framework with Convolutional Neural Networks. I also decided to see the results without using Convolutions and the result is below too, but the colors are much more disconnected (due to the prediction of one pixel location not having much impact on another which is addressed in CNNs). However, interestingly, the shapes of fake Pokemon appear to roughly better than the CNNs
 
 Roughly how it works is as follows:
 <img src="/assets/GANArchitecture.jpg" />
