@@ -12,6 +12,13 @@ tags:
   - Backend
 ---
 
+## Motivation
+This guide assumes basic knowledge of Data Structures! ie. (linked lists, stacks, queues, trees, heaps, sorting, time/space complexity)
+
+Like many, I've had to go through the software engineer recruitment process that unfortunately uses leetcode as a way to test applicants in most cases. Determining applicants is a whole different topic that I won't comment on, however, as I'm here to provide job-seekers in tech with a LeetCode guide!
+
+I'm by no means a die-hard at LeetCode, and in some sense this is here for my future use too, but I've gotten quite good at it having done so many problems, taking algorithms, teaching data structures, and recognizing patterns with the problems. Pattern recognition is what gets one through Algorithms, (shoutout to my CS 170 Berkeley students/alumnus!) so I hope that this guide will prove useful for you.
+
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur posuere commodo venenatis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam non ligula vel metus efficitur hendrerit. In hac habitasse platea dictumst. Praesent et mauris ut mi dapibus semper. Curabitur tortor justo, efficitur sit amet pretium cursus, porta eget odio. Cras ac venenatis dolor. Donec laoreet posuere malesuada. Curabitur nec mi tempor, placerat leo sit amet, tincidunt est. Quisque pellentesque venenatis magna, eget tristique nibh pulvinar in. Vestibulum vitae volutpat arcu. Aenean ut malesuada odio, sit amet pellentesque odio. Suspendisse nunc elit, blandit nec hendrerit non, aliquet at magna. Donec id leo ut nulla sagittis sodales.
 
 Integer vitae nibh elit. Suspendisse eget urna eu neque bibendum pharetra. Sed interdum lectus sem, in pulvinar magna dignissim vel. Quisque maximus at urna nec laoreet. Suspendisse potenti. Vestibulum rhoncus sem ut mi pellentesque, in vestibulum erat blandit. Aliquam sodales dui ac maximus consectetur. Duis quis est vehicula, imperdiet nisl nec, fermentum erat. Duis tortor diam, pharetra eu euismod in, vehicula non eros. Curabitur facilisis dui at erat ultrices gravida. In at nunc ultricies, pulvinar mi vel, sagittis mauris. Praesent pharetra posuere purus ac imperdiet. Nulla facilisi.
