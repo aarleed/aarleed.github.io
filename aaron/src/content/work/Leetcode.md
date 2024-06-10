@@ -28,7 +28,7 @@ The sections will be split up as follows:
 8. Heaps
 
 ## General interviewing advice
-- Practice different types of problems. Start at easy problems and make your way up to hard ones. Most of the time interviewers ask easy-medium level questions. (I've found if they ask hard it's seems unlikely they are actually hiring) [LeetCode 101 Decal at Berkeley](algorithmicthinking.github.io/#/) and [LeetCode Top 150](https://leetcode.com/studyplan/top-interview-150/) are great resources. If you have LeetCode premium you can even look at past interview questions from the company you are interviewing with (assuming it's a large enough company)!
+- Practice different types of problems. Start at easy problems and make your way up to hard ones. Most of the time interviewers ask easy-medium level questions. (I've found if they ask hard it's seems unlikely they are actually hiring) [LeetCode 101 Decal at Berkeley](https://algorithmicthinking.github.io/#/) and [LeetCode Top 150](https://leetcode.com/studyplan/top-interview-150/) are great resources. If you have LeetCode premium you can even look at past interview questions from the company you are interviewing with (assuming it's a large enough company)!
 - Use Python! It has the most support and is easiest to program in
 - Think aloud! it helps the interviewer know what you are thinking of and some interviewers will give hints towards the right algorithm if you do so.
 - It's ok to have a "brute force" algorithm (a perhaps inefficient one), this may often be good enough! especially for CodeSignal (a platform used for testing applicants) problems. But definitely use this as a start and build towards a solution.
@@ -41,7 +41,7 @@ LeetCode Easy problems can be solved by most programmers with a basic understand
 ## LeetCode Medium
 LeetCode Medium Problems are the most common problems you'll get in interviews. If you are attempting these problems, you should be able to immediately see the question and know how to solve it like <30 seconds. 
 
-There are tons of these problems, I would start by focussing my practice by the techniques. Again, [LeetCode 101 Decal at Berkeley](algorithmicthinking.github.io/#/) is a super good resource.
+There are tons of these problems, I would start by focussing my practice by the techniques. Again, [LeetCode 101 Decal at Berkeley](https://algorithmicthinking.github.io/#/) is a super good resource.
 
 ## LeetCode Hard
 Sometimes you'll encounter problems that are leetcode hard. In these cases, I would have skepticism about hiring, since most people aren't able to complete these problems in a reasonable amount of time. There are definitely some leetcode hards that are reasonable too, though. However, knowing the patterns described below for different problems and applying them still apply! You may need more specialized knowledge, such as bit masking, union finds, dijkstra's, etc.
@@ -123,9 +123,9 @@ Sometimes this also comes up in arrays, essentially there are some sort of inter
 
 One way to think about these problems is that if you imagine all of the intervals on an axis and you want to keep track of something. Then thinking about the techniques like sorting and the line sweep algorithm are the first steps that I usually think about.
 
-For example this could be something like (Merge Intervals)[https://leetcode.com/problems/merge-intervals/] or (Meeting Rooms II)[https://leetcode.com/problems/meeting-rooms-ii/]
+For example this could be something like [Merge Intervals](https://leetcode.com/problems/merge-intervals/) or [Meeting Rooms II](https://leetcode.com/problems/meeting-rooms-ii/)
 
-Line sweep is relatively simple, it involves looking at an axis of data points and going through every one. If you find yourself putting groups of related points in "boxes" aka "intervals" then line sweep is a good algorithm to use. Here's a very comprehensive guide and list of problems: (Guide)[https://leetcode.com/discuss/study-guide/2166045/line-sweep-algorithms]
+Line sweep is relatively simple, it involves looking at an axis of data points and going through every one. If you find yourself putting groups of related points in "boxes" aka "intervals" then line sweep is a good algorithm to use. Here's a very comprehensive guide and list of problems: [Guide](https://leetcode.com/discuss/study-guide/2166045/line-sweep-algorithms)
 
 ## Trees
 Trees are actually relatively easy, as there are only so many ways to traverse trees:
