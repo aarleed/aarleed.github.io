@@ -211,8 +211,8 @@ function openModal(content=null) {
       let gameStats = document.getElementById('game-statistics')
       gameStats.appendChild(createStatistic("Played", 1))
       gameStats.appendChild(createStatistic("Win %", calculateWinPerc(mistakesHistory) + "%"))
-      gameStats.appendChild(createStatistic("Current Streak", 1))
-      gameStats.appendChild(createStatistic("Max Streak", 1))
+      gameStats.appendChild(createStatistic("Current Streak", parseInt(localStorage.getItem('streakCurrent')) || 0))
+      gameStats.appendChild(createStatistic("Max Streak", parseInt(localStorage.getItem('streakMax')) || 0))
 
       // make graph
       var data = [{
@@ -370,6 +370,7 @@ function updateBoard(card1, card2, i1, i2, correct) {
     if (WORDS.length == finished.size) {
         mistakesHistory = updateHistory(mistakesHistory)
         localStorage.setItem('history', JSON.stringify(mistakesHistory))
+        updateStreaks(true);
         endGame(true, mistakes);
         
         return;
@@ -395,6 +396,7 @@ function updateBoard(card1, card2, i1, i2, correct) {
     if (mistakes > 6) {
       mistakesHistory = updateHistory(mistakesHistory)
       localStorage.setItem('history', JSON.stringify(mistakesHistory))
+      updateStreaks(false);
       endGame(false, mistakes);
       return;
     }
@@ -434,6 +436,38 @@ function removeAllListeners () {
     card.removeEventListener('click', eventListeners[i])
     console.log('remove card event listener')
   });
+}
+
+function toLocalDateStr(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function updateStreaks(won) {
+  let currentStreak = parseInt(localStorage.getItem('streakCurrent')) || 0;
+  let maxStreak = parseInt(localStorage.getItem('streakMax')) || 0;
+  let lastWinDate = localStorage.getItem('lastWinDate');
+  if (won) {
+    let today = new Date();
+    let todayStr = toLocalDateStr(today);
+    let lastStr = lastWinDate || null;
+    let yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    let yesterdayStr = toLocalDateStr(yesterday);
+    if (lastStr === todayStr) {
+      // already counted today
+    } else if (lastStr === yesterdayStr) {
+      currentStreak += 1;
+    } else {
+      currentStreak = 1;
+    }
+    maxStreak = Math.max(maxStreak, currentStreak);
+    localStorage.setItem('lastWinDate', todayStr);
+  } else {
+    currentStreak = 0;
+  }
+  localStorage.setItem('streakCurrent', currentStreak);
+  localStorage.setItem('streakMax', maxStreak);
+  return { currentStreak, maxStreak };
 }
 
 function updateHistory(mistakesHistory) {
