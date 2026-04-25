@@ -102,7 +102,7 @@ function initBoard() {
       newGame(currentDate)
       // TODO: start a new game
     }
-    else if (localStorage.key('explored') != null) {
+    else if (localStorage.getItem('explored') !== null) {
       // init from previous state bc still same date
       console.log('using previous state')
       initState(true)

@@ -61,13 +61,13 @@ function initBoard() {
   const currentDate = new Date()
   if (lastDate != null) {
     lastDate = new Date(lastDate)
-    if (isNextDay(lastDate, currentDate)) {
+    if (isDiffDay(lastDate, currentDate)) {
       // start new game
       console.log('new date new game')
       newGame(currentDate)
       // TODO: start a new game
     }
-    else if (localStorage.key('explored') != null) {
+    else if (localStorage.getItem('explored') !== null) {
       // init from previous state bc still same date
       console.log('using previous state')
       initState(true)
@@ -97,18 +97,10 @@ function newGame(currentDate) {
   localStorage.setItem('currentDate', currentDate.toISOString())
 }
 
-function isNextDay(date1, date2) {
-  // Extract year, month, and day from both dates
-  const year1 = date1.getFullYear();
-  const month1 = date1.getMonth();
-  const day1 = date1.getDate();
-
-  const year2 = date2.getFullYear();
-  const month2 = date2.getMonth();
-  const day2 = date2.getDate();
-
-  // Check if date2 is exactly one day after date1
-  return year2 === year1 && month2 === month1 && day2 === day1 + 1;
+function isDiffDay(date1, date2) {
+  return date1.getFullYear() !== date2.getFullYear() ||
+    date1.getMonth() !== date2.getMonth() ||
+    date1.getDate() !== date2.getDate();
 }
 
 function initState(previous) {
