@@ -249,6 +249,7 @@ var cardELS = document.querySelectorAll('.card');
 console.log(cardELS)
 
 const handleClick = (el, index) => {
+  if (guesses.length === 1 && guesses[0][1] === index) return;
   var cardInnerDiv = el.querySelector('.card-inner');
   flip(cardInnerDiv)
   explore(el, index)
