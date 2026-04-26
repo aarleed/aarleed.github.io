@@ -381,7 +381,7 @@ function updateBoard(card1, card2, i1, i2, correct) {
     }, 300)
     // add locking
     removeAllListeners()
-    setTimeout( function () {
+    var flipBackTimeout = setTimeout( function () {
       var card1InnerDiv = card1.querySelector('.card-inner');
       var card2InnerDiv = card2.querySelector('.card-inner');
       flip(card1InnerDiv); flip(card2InnerDiv);
@@ -394,6 +394,7 @@ function updateBoard(card1, card2, i1, i2, correct) {
       })
     } , 1000)
     if (mistakes > 6) {
+      clearTimeout(flipBackTimeout);
       mistakesHistory = updateHistory(mistakesHistory)
       localStorage.setItem('history', JSON.stringify(mistakesHistory))
       updateStreaks(false);
@@ -406,12 +407,20 @@ function updateBoard(card1, card2, i1, i2, correct) {
 
 }
 
+function revealAllCards() {
+  const cardInners = document.querySelectorAll('#game-board .card-inner');
+  cardInners.forEach(function(inner) {
+    inner.classList.add('flipCard');
+  });
+}
+
 function endGame(animate, mistakes) {
   // openModal, removeEventListeners, set game dialog box
   console.log('End Game')
   let tempText = "Statistics:"
   
   if (animate) {
+    revealAllCards();
     setTimeout(function () {
       cardELS.forEach(function (el) {
         animateCSS(el, "flipInX");
@@ -422,6 +431,7 @@ function endGame(animate, mistakes) {
     }, 1000) 
     
   } else {
+    revealAllCards();
     let dialog = document.getElementById("game-dialog");
     dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
     openModal(tempText)
