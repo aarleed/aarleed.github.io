@@ -166,7 +166,7 @@ function openModal(content=null) {
 
       // TODO: replace placeholders
       let gameStats = document.getElementById('game-statistics')
-      gameStats.appendChild(createStatistic("Played", 1))
+      gameStats.appendChild(createStatistic("Played", Object.values(mistakesHistory).reduce((a, b) => a + b, 0)))
       gameStats.appendChild(createStatistic("Win %", calculateWinPerc(mistakesHistory) + "%"))
       gameStats.appendChild(createStatistic("Current Streak", parseInt(localStorage.getItem('streakCurrent')) || 0))
       gameStats.appendChild(createStatistic("Max Streak", parseInt(localStorage.getItem('streakMax')) || 0))
