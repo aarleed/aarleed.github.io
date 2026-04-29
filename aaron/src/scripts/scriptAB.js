@@ -368,8 +368,11 @@ function updateBoard(card1, card2, i1, i2, correct) {
 
 function revealAllCards() {
   const cardInners = document.querySelectorAll('#game-board .card-inner');
-  cardInners.forEach(function(inner) {
+  cardInners.forEach(function(inner, i) {
     inner.classList.add('flipCard');
+    if (!finished.has(i)) {
+      inner.querySelector('.card-back').style.backgroundColor = '#787c7f';
+    }
   });
 }
 
