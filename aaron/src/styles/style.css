@@ -129,11 +129,14 @@ body {
       background-color: #c8b653; 
       transform: rotateY(180deg);
       font-size: clamp(0.6rem, 2.5vw, 1.2rem);
-      overflow-wrap: break-word;
-      word-break: break-word;
+      overflow: hidden;
       text-align: center;
       padding: 4px;
       box-sizing: border-box;
+    }
+
+    .card-back span {
+      white-space: nowrap;
     }
      
      .filled-box {

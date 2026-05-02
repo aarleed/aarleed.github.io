@@ -1,45 +1,21 @@
-// import { WORDS } from "./words.js";
+// Epoch for daily word rotation — all players get the same puzzle on the same day
+const WORD_PAIR_EPOCH = new Date(2025, 4, 1); // May 1, 2025
 
-// TODO: assume words is populated? might need localStorage
-// const WORDS = ["test", "tree", "exam" , "dog", "cat",
-//          "book", "bark", "sun", "shine", "pages", "desk", "drawer"];
-
-const WORDSDICT = new Map([
-  [0, ['dog', 'hound', 'tail', 'behind', 'bum', 'ass', 'sleazy', 'punk', 'hood', 'gang', 'cheap', 'tacky']],
-  [1, ['odor', 'smell', 'perfume', 'essence', 'effect', 'outcome', 'issue', 'topic', 'core', 'centre', 'heart', 'spirit']],
-  [2, ['measure', 'meter', 'value', 'rate', 'prize', 'award', 'loot', 'booty', 'plunder', 'ransack', 'strip', 'peel']],
-  [3, ['prarie', 'savanna', 'grass', 'pot', 'toilet', 'sewer', 'water', 'ocean', 'skunk', 'rat', 'hog', 'slob']],
-  [4, ['computer', 'game', 'cypher', 'decode', 'program', 'code', 'recurse', 'repeat', 'share', 'portion', 'contact', 'meet' ]],
-  [5, ['march', 'parade', 'exhibit', 'show', 'museum', ]],
-  [6, ['hex', 'spell', 'witch', 'goblin', 'dwarf', 'short', 'brief', 'lightning', 'fading', 'dim', 'bleach', 'white']],
-  [7, ['encourage', 'animate', 'cartoon', 'film', 'stream', 'Twitch', 'mist', 'haze', 'moisture', 'wet', 'tide', 'pod']]
-]);
-
-
-function setWords(date) {
-    var dayOfWeek = date.getDay()
-    return WORDSDICT[dayOfWeek]
-}
-let WORDS1 = ["sleep", "dream", "inspire", "spark", "cages", "jail", "votes", "election", "above", "under", 
-"America", "China", "goal", "target", "farm", "fields"]
-let WORDS = ["mince", "slice", "hotel", "inn", "onion", "shallot", "flag", "patriot", "Vegas", "gamble", "nose", "eye"]
+let WORDS = [];
 const MATCHES = new Map();
-for (let i = 0; i<WORDS.length; i+=2) {
-  MATCHES.set(WORDS[i], WORDS[i+1])
+
+async function loadWords() {
+  const res = await fetch('/words.json');
+  const allDays = await res.json();
+  const today = new Date();
+  const msPerDay = 86400000;
+  const dayIndex = ((Math.floor((today - WORD_PAIR_EPOCH) / msPerDay) % allDays.length) + allDays.length) % allDays.length;
+  WORDS = allDays[dayIndex];
+  MATCHES.clear();
+  for (let i = 0; i < WORDS.length; i += 2) {
+    MATCHES.set(WORDS[i], WORDS[i + 1]);
+  }
 }
-// MATCHES.set('tree', 'bark');
-
-// MATCHES.set('dog', 'cat');
-
-// MATCHES.set('test', 'exam');
-
-// MATCHES.set('sun', 'shine');
-
-// MATCHES.set('book', 'pages');
-
-// MATCHES.set('desk', 'drawer');
-// TODO: have this set to an int representing the date
-// var seed = 2;
 function random(seed) {
     var x = Math.sin(seed++) * 10000;
     return x - Math.floor(x);
@@ -53,7 +29,7 @@ function shuffleArray(array, seed) {
 }
 
 
-let explored = Array(WORDS.length).fill(false);
+let explored = [];
 let finished = new Set();
 
 
@@ -63,7 +39,6 @@ const NUMBER_OF_GUESSES = 3;
 let guessesRemaining = NUMBER_OF_GUESSES;
 let currentGuess = [];
 let nextLetter = 0;
-let rightGuessString = WORDS[Math.floor(Math.random() * WORDS.length)];
 let eventListeners = [];
 let mistakes = 0;
 let mistakesHistory = {
@@ -78,6 +53,22 @@ let mistakesHistory = {
 }
 let guesses = [];
 let isProcessing = false;
+
+function showInstructions() {
+  if (!localStorage.getItem('hasSeenInstructions')) {
+    const instrModal = document.getElementById('instructions-modal');
+    instrModal.style.display = 'block';
+    const closeInstr = function() {
+      instrModal.style.display = 'none';
+      localStorage.setItem('hasSeenInstructions', 'true');
+    };
+    document.getElementById('instructions-close').onclick = closeInstr;
+    document.getElementById('instructions-start').onclick = closeInstr;
+    instrModal.onclick = function(event) {
+      if (event.target === instrModal) closeInstr();
+    };
+  }
+}
 
 function showInstructions() {
   if (!localStorage.getItem('hasSeenInstructions')) {
@@ -163,6 +154,16 @@ function isDiffDay(date1, date2) {
   return year2 != year1 || month2 != month1 || day2 != day1;
 }
 
+function fitText(el) {
+  let span = el.querySelector('span');
+  if (!span) return;
+  let fontSize = parseFloat(getComputedStyle(el).fontSize);
+  while (span.scrollWidth > el.clientWidth && fontSize > 8) {
+    fontSize -= 0.5;
+    el.style.fontSize = fontSize + 'px';
+  }
+}
+
 function initState(previous) {
   // TODO: give design to tiles?
   if (previous) {
@@ -192,7 +193,9 @@ function initState(previous) {
       // cardFront.textContent = WORDS[i*4 + j]
       let cardBack = document.createElement("div")
       cardBack.className = "card-back"
-      cardBack.textContent = WORDS[i*4 + j]
+      let cardText = document.createElement("span")
+      cardText.textContent = WORDS[i*4 + j]
+      cardBack.appendChild(cardText)
       // cardFront.appendChild(cardText); cardBack.appendChild(cardText);
       cardInner.appendChild(cardFront)
       cardInner.appendChild(cardBack)
@@ -205,6 +208,7 @@ function initState(previous) {
       row.appendChild(card);
     }
     board.appendChild(row);
+    row.querySelectorAll('.card-back').forEach(fitText);
   }
 }
 
@@ -295,17 +299,20 @@ function calculateWinPerc(mistakesHistory) {
   return winPercentage
 }
 
-initBoard();
+(async function() {
+  await loadWords();
+  explored = Array(WORDS.length).fill(false);
+  initBoard();
 
-if (localStorage.getItem('noIntro')) {
-  // skip intro
-} else {
-  // openModal();
-  localStorage.setItem('noIntro', 'true')
-}
+  if (localStorage.getItem('noIntro')) {
+    // skip intro
+  } else {
+    // openModal();
+    localStorage.setItem('noIntro', 'true')
+  }
 
-var cardELS = document.querySelectorAll('.card');
-console.log(cardELS)
+  var cardELS = document.querySelectorAll('.card');
+  console.log(cardELS)
 
 const handleClick = (el, index) => {
   if (isProcessing) return;
@@ -315,18 +322,34 @@ const handleClick = (el, index) => {
   explore(el, index)
 }
 
-function addEventListeners() {
-  cardELS.forEach(function (el, index) {
-    var listenerFct = function () {handleClick(el, index)}
-    eventListeners.push(listenerFct)
-    if (!finished.has(index) && mistakes < 7) {
-      el.addEventListener('click', listenerFct)
-    }
-  })
-}
+  function addEventListeners() {
+    cardELS.forEach(function (el, index) {
+      var listenerFct = function () {handleClick(el, index)}
+      eventListeners.push(listenerFct)
+      if (!finished.has(index) && mistakes < 7) {
+        el.addEventListener('click', listenerFct)
+      }
+    })
+  }
 
-// add eventListeners after board initialization
-addEventListeners()
+  // add eventListeners after board initialization
+  addEventListeners()
+
+  // Briefly show all tiles at the start of a new game
+  if (finished.size === 0 && mistakes === 0 && !explored.some(Boolean)) {
+    if (!localStorage.getItem('hasSeenInstructions')) {
+      showInstructions();
+    } else {
+      const allInners = document.querySelectorAll('#game-board .card-inner');
+      allInners.forEach(function(inner) { inner.classList.add('flipCard'); });
+      removeAllListeners();
+      setTimeout(function() {
+        allInners.forEach(function(inner) { inner.classList.remove('flipCard'); });
+        addEventListeners();
+      }, 1500);
+    }
+  }
+})();
 
 // Briefly show all tiles at the start of a new game
 if (finished.size === 0 && mistakes === 0 && !explored.some(Boolean)) {
