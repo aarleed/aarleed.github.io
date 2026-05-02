@@ -310,6 +310,17 @@ function addEventListeners() {
 // add eventListeners after board initialization
 addEventListeners()
 
+// Briefly show all tiles at the start of a new game
+if (finished.size === 0 && mistakes === 0 && !explored.some(Boolean)) {
+  const allInners = document.querySelectorAll('#game-board .card-inner');
+  allInners.forEach(function(inner) { inner.classList.add('flipCard'); });
+  removeAllListeners();
+  setTimeout(function() {
+    allInners.forEach(function(inner) { inner.classList.remove('flipCard'); });
+    addEventListeners();
+  }, 1500);
+}
+
 
 function check(guesses) {
     let card1 = guesses[0][0]
