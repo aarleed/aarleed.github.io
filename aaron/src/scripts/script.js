@@ -9,6 +9,9 @@ async function loadWords() {
   const allDays = await res.json();
   const today = new Date();
   const msPerDay = 86400000;
+  // Days since epoch, wrapped to cycle through available word sets.
+  // Uses local time so the puzzle changes at each player's midnight (same as Wordle).
+  // The double-modulo handles negative values for dates before the epoch.
   const dayIndex = ((Math.floor((today - WORD_PAIR_EPOCH) / msPerDay) % allDays.length) + allDays.length) % allDays.length;
   WORDS = allDays[dayIndex];
   MATCHES.clear();
