@@ -52,6 +52,23 @@ let mistakesHistory = {
   "7+:":0
 }
 let guesses = [];
+let isProcessing = false;
+
+function showInstructions() {
+  if (!localStorage.getItem('hasSeenInstructions')) {
+    const instrModal = document.getElementById('instructions-modal');
+    instrModal.style.display = 'block';
+    const closeInstr = function() {
+      instrModal.style.display = 'none';
+      localStorage.setItem('hasSeenInstructions', 'true');
+    };
+    document.getElementById('instructions-close').onclick = closeInstr;
+    document.getElementById('instructions-start').onclick = closeInstr;
+    instrModal.onclick = function(event) {
+      if (event.target === instrModal) closeInstr();
+    };
+  }
+}
 
 function showInstructions() {
   if (!localStorage.getItem('hasSeenInstructions')) {
@@ -290,12 +307,13 @@ function calculateWinPerc(mistakesHistory) {
   var cardELS = document.querySelectorAll('.card');
   console.log(cardELS)
 
-  const handleClick = (el, index) => {
-    if (guesses.length === 1 && guesses[0][1] === index) return;
-    var cardInnerDiv = el.querySelector('.card-inner');
-    flip(cardInnerDiv)
-    explore(el, index)
-  }
+const handleClick = (el, index) => {
+  if (isProcessing) return;
+  if (guesses.length === 1 && guesses[0][1] === index) return;
+  var cardInnerDiv = el.querySelector('.card-inner');
+  flip(cardInnerDiv)
+  explore(el, index)
+}
 
   function addEventListeners() {
     cardELS.forEach(function (el, index) {
@@ -326,6 +344,21 @@ function calculateWinPerc(mistakesHistory) {
   }
 })();
 
+// Briefly show all tiles at the start of a new game
+if (finished.size === 0 && mistakes === 0 && !explored.some(Boolean)) {
+  if (!localStorage.getItem('hasSeenInstructions')) {
+    showInstructions();
+  } else {
+    const allInners = document.querySelectorAll('#game-board .card-inner');
+    allInners.forEach(function(inner) { inner.classList.add('flipCard'); });
+    removeAllListeners();
+    setTimeout(function() {
+      allInners.forEach(function(inner) { inner.classList.remove('flipCard'); });
+      addEventListeners();
+    }, 1500);
+  }
+}
+
 
 function check(guesses) {
     let card1 = guesses[0][0]
@@ -350,6 +383,7 @@ function check(guesses) {
 function explore(el, index) {
   guesses.push([el, index]);
   if (guesses.length == 2) {
+    isProcessing = true;
     check(guesses)
     guesses = []
   }
@@ -380,6 +414,7 @@ function updateBoard(card1, card2, i1, i2, correct) {
       card1back.style.backgroundColor = "#6ca965 "
       card2back.style.backgroundColor = "#6ca965"
       animateCSS(card1, "flipInX"); animateCSS(card2, "flipInX");
+      isProcessing = false;
     }, 1000)
     finished.add(i1); finished.add(i2);
     let finishedArr = Array.from(finished)
@@ -409,9 +444,11 @@ function updateBoard(card1, card2, i1, i2, correct) {
           el.addEventListener('click', eventListeners[index])
         }
       })
+      isProcessing = false;
     } , 1000)
     if (mistakes > 6) {
       clearTimeout(flipBackTimeout);
+      isProcessing = false;
       mistakesHistory = updateHistory(mistakesHistory)
       localStorage.setItem('history', JSON.stringify(mistakesHistory))
       updateStreaks(false);
