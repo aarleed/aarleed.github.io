@@ -170,3 +170,44 @@ body {
        cursor: pointer;
        text-transform: uppercase;
      }
+
+     /* Instructions Modal */
+     #instructions-content {
+       background-color: #fefefe;
+       margin: 10% auto;
+       padding: 20px;
+       border: 1px solid #888;
+       border-radius: 5px;
+       width: 80%;
+       max-width: 500px;
+     }
+
+     #instructions-content h2 {
+       text-align: center;
+       color: #c8b653;
+     }
+
+     #instructions-content ul {
+       text-align: left;
+       padding-left: 20px;
+     }
+
+     #instructions-content li {
+       margin-bottom: 8px;
+     }
+
+     #instructions-start {
+       display: block;
+       margin: 20px auto 0;
+       background-color: #c8b653;
+       color: #fff;
+       border: none;
+       padding: 10px 30px;
+       border-radius: 5px;
+       cursor: pointer;
+       font-size: 1.1rem;
+     }
+
+     #instructions-start:hover {
+       background-color: #b0a045;
+     }

@@ -78,6 +78,22 @@ let mistakesHistory = {
 }
 let guesses = [];
 
+function showInstructions() {
+  if (!localStorage.getItem('hasSeenInstructions')) {
+    const instrModal = document.getElementById('instructions-modal');
+    instrModal.style.display = 'block';
+    const closeInstr = function() {
+      instrModal.style.display = 'none';
+      localStorage.setItem('hasSeenInstructions', 'true');
+    };
+    document.getElementById('instructions-close').onclick = closeInstr;
+    document.getElementById('instructions-start').onclick = closeInstr;
+    instrModal.onclick = function(event) {
+      if (event.target === instrModal) closeInstr();
+    };
+  }
+}
+
 // min game state requires
 // TODO: reset board after 12am
 
@@ -312,13 +328,17 @@ addEventListeners()
 
 // Briefly show all tiles at the start of a new game
 if (finished.size === 0 && mistakes === 0 && !explored.some(Boolean)) {
-  const allInners = document.querySelectorAll('#game-board .card-inner');
-  allInners.forEach(function(inner) { inner.classList.add('flipCard'); });
-  removeAllListeners();
-  setTimeout(function() {
-    allInners.forEach(function(inner) { inner.classList.remove('flipCard'); });
-    addEventListeners();
-  }, 1500);
+  if (!localStorage.getItem('hasSeenInstructions')) {
+    showInstructions();
+  } else {
+    const allInners = document.querySelectorAll('#game-board .card-inner');
+    allInners.forEach(function(inner) { inner.classList.add('flipCard'); });
+    removeAllListeners();
+    setTimeout(function() {
+      allInners.forEach(function(inner) { inner.classList.remove('flipCard'); });
+      addEventListeners();
+    }, 1500);
+  }
 }
 
 
