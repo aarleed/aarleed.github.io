@@ -286,9 +286,106 @@ function calculateWinPerc(mistakesHistory) {
   return winPercentage
 }
 
+function formatStartDate(date) {
+  return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(date);
+}
+
+function detectStartScreenState() {
+  var lastDate = localStorage.getItem('currentDate');
+  if (!lastDate) return 'start';
+  var stored = new Date(lastDate);
+  var today = new Date();
+  if (isDiffDay(stored, today)) return 'start';
+  var exploredData = localStorage.getItem('explored');
+  var finishedData = localStorage.getItem('finished');
+  var stats = localStorage.getItem('statistics');
+  var finishedSet = finishedData ? new Set(JSON.parse(finishedData)) : new Set();
+  var storedMistakes = stats ? parseInt(stats) : 0;
+  // Need to know WORDS.length — use finishedSet size check against 12 (standard game size)
+  // Actually we check if game is over: finished covers all cards or mistakes > 6
+  var exploredArr = exploredData ? JSON.parse(exploredData) : [];
+  if (storedMistakes > 6) return 'lost';
+  if (finishedSet.size >= 12) return 'won';
+  if (finishedSet.size > 0 || exploredArr.some(Boolean)) return 'resume';
+  return 'start';
+}
+
+function initStartScreen() {
+  var state = detectStartScreenState();
+  var subtitle = document.getElementById('start-subtitle');
+  var primaryBtn = document.getElementById('start-primary-btn');
+  var dateEl = document.getElementById('start-date');
+  dateEl.textContent = formatStartDate(new Date());
+
+  switch (state) {
+    case 'start':
+      subtitle.textContent = 'Flip over cards and match related words into pairs';
+      primaryBtn.textContent = 'Play';
+      break;
+    case 'resume':
+      subtitle.textContent = 'Welcome back! Continue matching words.';
+      primaryBtn.textContent = 'Resume Game';
+      break;
+    case 'won':
+      subtitle.textContent = 'Nice job! You completed today\'s game already.';
+      primaryBtn.textContent = 'Admire Puzzle';
+      break;
+    case 'lost':
+      subtitle.textContent = 'You completed today\'s game already. Try again tomorrow!';
+      primaryBtn.textContent = 'Admire Puzzle';
+      break;
+  }
+}
+
+initStartScreen();
+
 (async function() {
   await loadWords();
   explored = Array(WORDS.length).fill(false);
+
+  var startScreen = document.getElementById('start-screen');
+  var primaryBtn = document.getElementById('start-primary-btn');
+  var secondaryBtn = document.getElementById('start-secondary-btn');
+
+  function dismissStartScreen() {
+    startScreen.classList.add('hidden');
+    localStorage.setItem('hasSeenInstructions', 'true');
+    // Briefly show all tiles after start screen is dismissed for new games
+    if (finished.size === 0 && mistakes === 0 && !explored.some(Boolean)) {
+      const allInners = document.querySelectorAll('#game-board .card-inner');
+      allInners.forEach(function(inner) { inner.classList.add('flipCard'); });
+      removeAllListeners();
+      setTimeout(function() {
+        allInners.forEach(function(inner) { inner.classList.remove('flipCard'); });
+        addEventListeners();
+      }, 1500);
+    }
+    // Show distribution modal for completed games
+    if (finished.size >= WORDS.length || mistakes > 6) {
+      setTimeout(function() { openModal("Statistics:"); }, 500);
+    }
+  }
+
+  primaryBtn.addEventListener('click', function() {
+    dismissStartScreen();
+  });
+
+  secondaryBtn.addEventListener('click', function() {
+    var instrModal = document.getElementById('instructions-modal');
+    instrModal.style.display = 'block';
+    var closeInstr = function() {
+      instrModal.style.display = 'none';
+    };
+    document.getElementById('instructions-close').onclick = closeInstr;
+    document.getElementById('instructions-start').onclick = function() {
+      closeInstr();
+      dismissStartScreen();
+    };
+    instrModal.onclick = function(event) {
+      if (event.target === instrModal) closeInstr();
+    };
+  });
+
   initBoard();
 
   if (localStorage.getItem('noIntro')) {
@@ -321,37 +418,7 @@ const handleClick = (el, index) => {
 
   // add eventListeners after board initialization
   addEventListeners()
-
-  // Briefly show all tiles at the start of a new game
-  if (finished.size === 0 && mistakes === 0 && !explored.some(Boolean)) {
-    if (!localStorage.getItem('hasSeenInstructions')) {
-      showInstructions();
-    } else {
-      const allInners = document.querySelectorAll('#game-board .card-inner');
-      allInners.forEach(function(inner) { inner.classList.add('flipCard'); });
-      removeAllListeners();
-      setTimeout(function() {
-        allInners.forEach(function(inner) { inner.classList.remove('flipCard'); });
-        addEventListeners();
-      }, 1500);
-    }
-  }
 })();
-
-// Briefly show all tiles at the start of a new game
-if (finished.size === 0 && mistakes === 0 && !explored.some(Boolean)) {
-  if (!localStorage.getItem('hasSeenInstructions')) {
-    showInstructions();
-  } else {
-    const allInners = document.querySelectorAll('#game-board .card-inner');
-    allInners.forEach(function(inner) { inner.classList.add('flipCard'); });
-    removeAllListeners();
-    setTimeout(function() {
-      allInners.forEach(function(inner) { inner.classList.remove('flipCard'); });
-      addEventListeners();
-    }, 1500);
-  }
-}
 
 
 function check(guesses) {
