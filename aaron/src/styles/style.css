@@ -150,10 +150,8 @@
 }
 
 body {
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  }
-  h1 {
-      text-align: center;
+    background-color: #f4f4f6;
+    font-family: "TeXGyreHeros", ui-sans-serif, sans-serif;
   }
   #game-statistics {
     display: flex;
@@ -211,37 +209,25 @@ body {
   }
      
      #game-board {
-       width: 100%;
-       display: flex;
-       align-items: center;
-       flex-direction: column;
-     }
-  
-     #game-dialog {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      border: #787c7f 2px solid;
-      font-size: 0.9rem;
-      padding: 1rem;
-      margin: 0.5rem;
-      justify-content: center;
+       display: grid;
+       grid-template-columns: repeat(4, 88px);
+       gap: 8px;
      }
 
      
      .card {
-       border-radius: 3px;
-       margin: 2px;
-       font-size: 1.2em; /* 1.5rem; */
+       border-radius: 4px;
+       margin: 0;
+       font-size: 16px;
        color: #fff;
        font-weight: 700;
-       height: 7rem;
-       width: 7rem;
+       height: 88px;
+       width: 88px;
        display: flex;
        justify-content: center;
        align-items: center;
-       text-transform: uppercase;
        overflow: hidden;
+       cursor: pointer;
      }
   
      .card-inner {
@@ -273,17 +259,19 @@ body {
     }
     
     .card-front {
-      background-color: #787c7f	;
+      background-color: #ffffff;
     }
     /* #6ca965 */
     .card-back {
-      background-color: #c8b653; 
+      background-color: #c8b653;
       transform: rotateY(180deg);
-      font-size: clamp(0.6rem, 2.5vw, 1.2rem);
+      font-size: clamp(0.6rem, 2.5vw, 1rem);
+      font-family: "TeXGyreHeros", ui-sans-serif, sans-serif;
       overflow: hidden;
       text-align: center;
-      padding: 4px;
+      padding: 8px;
       box-sizing: border-box;
+      color: #ffffff;
     }
 
     .card-back span {
@@ -295,10 +283,7 @@ body {
      }
      
      .letter-row {
-      display: flex;
-      flex-wrap: nowrap;
-      justify-content: center;
-      width: 100%;
+       display: contents;
      }
      
      #keyboard-cont {
@@ -538,3 +523,149 @@ body {
       from { transform: translateY(0);    opacity: 1; }
       to   { transform: translateY(24px); opacity: 0; }
     }
+
+/* ---- Game Screen Layout ---- */
+
+#game-main {
+  width: 100%;
+  max-width: 402px;
+  margin: 0 auto;
+  padding: 24px 12px 40px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+/* Actions bar */
+#game-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+#game-icon-btns {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.game-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: none;
+  border-radius: 99px;
+  background-color: #ffffff;
+  cursor: pointer;
+  color: #7c858c;
+  flex-shrink: 0;
+}
+
+.game-icon-btn:hover {
+  opacity: 0.8;
+}
+
+.game-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+/* Feedback / game text */
+#game-text {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  color: #697177;
+  text-align: center;
+  margin: 0;
+  width: 278px;
+}
+
+/* Game info section */
+#game-info {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+#game-stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-style: normal;
+  white-space: nowrap;
+}
+
+#moves-counter,
+#pairs-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#pairs-fraction {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: normal;
+  color: #1f2025;
+  font-family: "TeXGyreHeros", ui-sans-serif, sans-serif;
+}
+
+.game-stat-label {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  color: #697177;
+  font-family: "TeXGyreHeros", ui-sans-serif, sans-serif;
+}
+
+#moves-count {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: normal;
+  color: #1f2025;
+  font-family: "TeXGyreHeros", ui-sans-serif, sans-serif;
+}
+
+/* Mistake counter */
+#mistake-counter {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+#mistake-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.mistake-dot {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #697177;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+}
+
+.mistake-dot.used {
+  background-color: #dfe1e2;
+}

@@ -40,8 +40,6 @@ import "../styles/style.css";
         </div>
     </div>
 
-    <h1> WordPair </h1>
-
     <div id="instructions-modal" class="modal-class instructions-modal">
         <div id="instructions-content" role="dialog" aria-modal="true" aria-labelledby="instructions-heading">
             <button type="button" id="instructions-close" class="instructions-close-btn" aria-label="Close how to play">
@@ -99,19 +97,58 @@ import "../styles/style.css";
         </div>
     </div>
     
-    <div id="statistics">
-        
+    <div id="game-main">
+        <div id="game-actions">
+            <button type="button" id="game-back-btn" class="game-icon-btn" aria-label="Go back">
+                <svg class="game-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <div id="game-icon-btns">
+                <button type="button" id="game-stats-btn" class="game-icon-btn" aria-label="Statistics">
+                    <svg class="game-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M18 20V10M12 20V4M6 20V14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <button type="button" id="game-help-btn" class="game-icon-btn" aria-label="How to play">
+                    <svg class="game-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+                        <path d="M9.5 9.5C9.5 8.12 10.62 7 12 7C13.38 7 14.5 8.12 14.5 9.5C14.5 10.64 13.77 11.62 12.75 11.96C12.32 12.1 12 12.5 12 12.95V13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="12" cy="16.5" r="0.75" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <p id="game-text">Flip over cards and match related words into pairs</p>
+        <div id="game-board"></div>
+        <div id="game-info">
+            <div id="game-stats-row">
+                <div id="moves-counter">
+                    <span id="moves-count">0</span>
+                    <span class="game-stat-label">moves</span>
+                </div>
+                <div id="pairs-counter">
+                    <div id="pairs-fraction">
+                        <span id="pairs-found" class="game-stat-value">0</span>
+                        <span class="game-stat-label">of</span>
+                        <span id="total-pairs" class="game-stat-value">6</span>
+                    </div>
+                    <span class="game-stat-label">pairs found</span>
+                </div>
+            </div>
+            <div id="mistake-counter">
+                <span class="game-stat-label">Mistakes remaining:</span>
+                <div id="mistake-dots">
+                    <span class="mistake-dot"></span>
+                    <span class="mistake-dot"></span>
+                    <span class="mistake-dot"></span>
+                    <span class="mistake-dot"></span>
+                    <span class="mistake-dot"></span>
+                    <span class="mistake-dot"></span>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="game-board"> 
-
-    </div>
-
-    <div id ="game-dialog">
-        <div id="mistakes">mistakes: 0</div>
-        <div id="game-text">Welcome! start clicking on the cards and find pairs based on word meanings. You have up to 6 mistakes!</div>
-    </div>
-
-    <div id="test"></div>
 
     
 
