@@ -60,13 +60,12 @@ let isProcessing = false;
 function showInstructions() {
   if (!localStorage.getItem('hasSeenInstructions')) {
     const instrModal = document.getElementById('instructions-modal');
-    instrModal.style.display = 'block';
+    instrModal.style.display = 'flex';
     const closeInstr = function() {
       instrModal.style.display = 'none';
       localStorage.setItem('hasSeenInstructions', 'true');
     };
     document.getElementById('instructions-close').onclick = closeInstr;
-    document.getElementById('instructions-start').onclick = closeInstr;
     instrModal.onclick = function(event) {
       if (event.target === instrModal) closeInstr();
     };
@@ -286,8 +285,18 @@ function calculateWinPerc(mistakesHistory) {
   return winPercentage
 }
 
-function formatStartDate(date) {
-  return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(date);
+function formatStartDateOrdinal(date) {
+  var day = date.getDate();
+  var mod100 = day % 100;
+  var suffix = 'th';
+  if (mod100 < 11 || mod100 > 13) {
+    if (day % 10 === 1) suffix = 'st';
+    else if (day % 10 === 2) suffix = 'nd';
+    else if (day % 10 === 3) suffix = 'rd';
+  }
+  var month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date);
+  var year = date.getFullYear();
+  return month + ' ' + day + suffix + ', ' + year;
 }
 
 function detectStartScreenState() {
@@ -315,7 +324,9 @@ function initStartScreen() {
   var subtitle = document.getElementById('start-subtitle');
   var primaryBtn = document.getElementById('start-primary-btn');
   var dateEl = document.getElementById('start-date');
-  dateEl.textContent = formatStartDate(new Date());
+  var today = new Date();
+  dateEl.textContent = formatStartDateOrdinal(today);
+  dateEl.setAttribute('datetime', today.toISOString().slice(0, 10));
 
   switch (state) {
     case 'start':
@@ -372,15 +383,11 @@ initStartScreen();
 
   secondaryBtn.addEventListener('click', function() {
     var instrModal = document.getElementById('instructions-modal');
-    instrModal.style.display = 'block';
+    instrModal.style.display = 'flex';
     var closeInstr = function() {
       instrModal.style.display = 'none';
     };
     document.getElementById('instructions-close').onclick = closeInstr;
-    document.getElementById('instructions-start').onclick = function() {
-      closeInstr();
-      dismissStartScreen();
-    };
     instrModal.onclick = function(event) {
       if (event.target === instrModal) closeInstr();
     };

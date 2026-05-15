@@ -17,33 +17,76 @@ import "../styles/style.css";
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   />
+    <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin />
+    <link href="https://fonts.cdnfonts.com/css/tex-gyre-heros" rel="stylesheet" />
 </head>
 <body>
     <div id="start-screen">
         <div id="start-screen-content">
-            <img id="start-icon" src="/wordpair-logo.svg" alt="WordPair logo" />
-            <div id="start-title">WordPair</div>
-            <div id="start-subtitle"></div>
-            <div id="start-date"></div>
-            <button id="start-primary-btn"></button>
-            <button id="start-secondary-btn">How to Play</button>
+            <div id="start-screen-heading">
+                <div id="start-logo-title">
+                    <img id="start-icon" src="/wordpair-logo.svg" alt="WordPair logo" width="64" height="64" />
+                    <div id="start-title">WordPair</div>
+                </div>
+                <p id="start-subtitle"></p>
+            </div>
+            <div id="start-actions">
+                <time id="start-date"></time>
+                <div id="start-buttons">
+                    <button type="button" id="start-primary-btn"></button>
+                    <button type="button" id="start-secondary-btn">How to Play</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <h1> WordPair </h1>
 
-    <div id="instructions-modal" class="modal-class">
-        <div id="instructions-content">
-            <span id="instructions-close" class="close">&times;</span>
-            <h2>How to Play</h2>
-            <p>Find matching word pairs based on their meanings!</p>
-            <ul>
-                <li>Click on a card to flip it over</li>
-                <li>Click a second card to find its match</li>
-                <li>Matching pairs stay face up</li>
-                <li>You have up to 6 mistakes before the game ends</li>
-            </ul>
-            <button id="instructions-start">Let's Play!</button>
+    <div id="instructions-modal" class="modal-class instructions-modal">
+        <div id="instructions-content" role="dialog" aria-modal="true" aria-labelledby="instructions-heading">
+            <button type="button" id="instructions-close" class="instructions-close-btn" aria-label="Close how to play">
+                <svg class="instructions-close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <div class="instructions-sheet-body">
+                <header class="instructions-block instructions-heading-block">
+                    <h2 id="instructions-heading" class="instructions-h2">How to Play</h2>
+                    <p class="instructions-lead">Flip over cards and match related words into pairs.</p>
+                </header>
+                <section class="instructions-block instructions-rules" aria-labelledby="instructions-rules-heading">
+                    <h3 id="instructions-rules-heading" class="instructions-h4">Rules</h3>
+                    <ol class="instructions-ol">
+                        <li class="instructions-li">Each word must be <strong>semantically related</strong>—they may be synonyms, antonyms, or share a common theme. Each word has <strong>exactly one</strong> pairing word.</li>
+                        <li class="instructions-li">Find all 6 pairs without making 6 mistakes.</li>
+                    </ol>
+                </section>
+                <section class="instructions-block instructions-mistake" aria-labelledby="instructions-mistake-heading">
+                    <h3 id="instructions-mistake-heading" class="instructions-h4">What's a mistake?</h3>
+                    <p class="instructions-body">A mistake happens when you flip over 2 cards you have already flipped before.</p>
+                </section>
+                <section class="instructions-block instructions-examples" aria-labelledby="instructions-examples-heading">
+                    <h3 id="instructions-examples-heading" class="instructions-h4">Examples</h3>
+                    <div class="instructions-example-row">
+                        <div class="instructions-example-card instructions-example-card--green">dull</div>
+                        <span class="instructions-example-muted">and</span>
+                        <div class="instructions-example-card instructions-example-card--green">sharp</div>
+                        <span class="instructions-example-muted">are a pair.</span>
+                    </div>
+                    <div class="instructions-example-row">
+                        <div class="instructions-example-card instructions-example-card--orange">damp</div>
+                        <span class="instructions-example-muted">and</span>
+                        <div class="instructions-example-card instructions-example-card--orange">wet</div>
+                        <span class="instructions-example-muted">are a pair.</span>
+                    </div>
+                    <div class="instructions-example-row">
+                        <div class="instructions-example-card instructions-example-card--blue">Vegas</div>
+                        <span class="instructions-example-muted">and</span>
+                        <div class="instructions-example-card instructions-example-card--blue">gamble</div>
+                        <span class="instructions-example-muted">are a pair.</span>
+                    </div>
+                </section>
+            </div>
         </div>
     </div>
 
