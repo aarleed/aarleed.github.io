@@ -286,16 +286,11 @@ function calculateWinPerc(mistakesHistory) {
 }
 
 function formatStartDateOrdinal(date) {
+  var month = date.toLocaleString('en-US', { month: 'long' });
   var day = date.getDate();
-  var mod100 = day % 100;
-  var suffix = 'th';
-  if (mod100 < 11 || mod100 > 13) {
-    if (day % 10 === 1) suffix = 'st';
-    else if (day % 10 === 2) suffix = 'nd';
-    else if (day % 10 === 3) suffix = 'rd';
-  }
-  var month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date);
   var year = date.getFullYear();
+  var suffixes = { one: 'st', two: 'nd', few: 'rd', other: 'th' };
+  var suffix = suffixes[new Intl.PluralRules('en-US', { type: 'ordinal' }).select(day)];
   return month + ' ' + day + suffix + ', ' + year;
 }
 
