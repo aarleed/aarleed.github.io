@@ -379,9 +379,16 @@ initStartScreen();
   secondaryBtn.addEventListener('click', function() {
     var instrModal = document.getElementById('instructions-modal');
     instrModal.style.display = 'flex';
+  
     var closeInstr = function() {
-      instrModal.style.display = 'none';
+      var content = document.getElementById('instructions-content');
+      content.classList.add('instructions-closing');
+      content.addEventListener('animationend', function() {
+        instrModal.style.display = 'none';
+        content.classList.remove('instructions-closing');
+      }, { once: true });
     };
+  
     document.getElementById('instructions-close').onclick = closeInstr;
     instrModal.onclick = function(event) {
       if (event.target === instrModal) closeInstr();
