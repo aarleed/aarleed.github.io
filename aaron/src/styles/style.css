@@ -1,15 +1,27 @@
-/* Start Screen */
+/* Start Screen — WordPair Figma tokens (Background/default, Text/*, Fill/brand, Stroke/primary, Title / Header 3 / Body 1 / Button) */
 #start-screen {
+  --wp-bg-default: #f4f4f6;
+  --wp-text-primary: #1f2025;
+  --wp-text-secondary: #697177;
+  --wp-text-inverse: #ffffff;
+  --wp-fill-brand: #08179c;
+  --wp-fill-brand-hover: #010d79;
+  --wp-fill-brand-active: #000852;
+  --wp-stroke-primary: #7c858c;
+  --wp-fill-secondary-hover: #dfe1e2;
+  --wp-fill-secondary-active: #dfe1e2;
+
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: #fff;
+  background: var(--wp-bg-default);
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: "TeXGyreHeros", ui-sans-serif, sans-serif;
 }
 
 #start-screen.hidden {
@@ -21,53 +33,120 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 12px;
+  gap: 80px;
+  width: min(303px, calc(100vw - 32px));
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+#start-screen-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+#start-logo-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
 }
 
 #start-icon {
+  display: block;
   width: 64px;
   height: 64px;
+  flex-shrink: 0;
 }
 
 #start-title {
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-#start-date {
-  font-size: 0.85rem;
-  color: #555;
-  margin-top: 8px;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 30px;
+  letter-spacing: -0.02em;
+  color: var(--wp-text-primary);
 }
 
 #start-subtitle {
-  font-size: 1rem;
-  color: #666;
-  max-width: 280px;
-  line-height: 1.4;
+  margin: 0;
+  width: 100%;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 125%;
+  letter-spacing: 0;
+  color: var(--wp-text-secondary);
+}
+
+#start-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: min(278px, 100%);
+}
+
+#start-date {
+  display: block;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0;
+  color: var(--wp-text-primary);
+}
+
+#start-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+#start-primary-btn,
+#start-secondary-btn {
+  width: 160px;
+  box-sizing: border-box;
+  padding: 16px 24px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0;
+  cursor: pointer;
+  text-align: center;
 }
 
 #start-primary-btn {
-  background-color: #1F2025;
-  color: #fff;
+  background-color: var(--wp-fill-brand);
+  color: var(--wp-text-inverse);
   border: none;
-  border-radius: 25px;
-  padding: 12px 40px;
-  font-size: 1rem;
-  cursor: pointer;
-  min-width: 180px;
-  margin-top: 8px;
+}
+
+#start-primary-btn:hover {
+  background-color: var(--wp-fill-brand-hover);
+}
+
+#start-primary-btn:active {
+  background-color: var(--wp-fill-brand-active);
 }
 
 #start-secondary-btn {
-  background-color: #fff;
-  color: #1F2025;
-  border: 2px solid #1F2025;
-  border-radius: 25px;
-  padding: 10px 40px;
-  font-size: 1rem;
-  cursor: pointer;
-  min-width: 180px;
+  background-color: transparent;
+  color: var(--wp-text-primary);
+  border: 1px solid var(--wp-stroke-primary);
+}
+
+#start-secondary-btn:hover {
+  background-color: var(--wp-fill-secondary-hover);
+}
+
+#start-secondary-btn:active {
+  background-color: var(--wp-fill-secondary-active);
 }
 
 body {
@@ -246,43 +325,200 @@ body {
        text-transform: uppercase;
      }
 
-     /* Instructions Modal */
+     /* How to play sheet — Figma node 63:2914 */
+     /* Mobile: full-viewport sheet (top + bottom flush); inner padding unchanged */
+     #instructions-modal.instructions-modal {
+       align-items: flex-end;
+       justify-content: center;
+       box-sizing: border-box;
+       overflow: hidden;
+       padding-top: 32px;
+     }
+
      #instructions-content {
-       background-color: #fefefe;
-       margin: 10% auto;
-       padding: 20px;
-       border: 1px solid #888;
-       border-radius: 5px;
-       width: 80%;
-       max-width: 500px;
+       box-sizing: border-box;
+       width: 100%;
+       max-width: none;
+       height: 100%;
+       max-height: 100%;
+       overflow: hidden;
+       background-color: #f4f4f6;
+       border-radius: 0;
+       padding: 16px 12px calc(8px + env(safe-area-inset-bottom, 0px)) 12px;
+       font-family: "TeXGyreHeros", ui-sans-serif, sans-serif;
+       display: flex;
+       flex-direction: column;
+       align-items: stretch;
      }
 
-     #instructions-content h2 {
-       text-align: center;
-       color: #c8b653;
+     .instructions-sheet-body {
+       display: flex;
+       flex-direction: column;
+       gap: 40px;
+       padding: 0 12px 32px;
+       flex: 1 1 auto;
+       min-height: 0;
+       overflow-y: auto;
+       -webkit-overflow-scrolling: touch;
      }
 
-     #instructions-content ul {
-       text-align: left;
-       padding-left: 20px;
-     }
-
-     #instructions-content li {
-       margin-bottom: 8px;
-     }
-
-     #instructions-start {
-       display: block;
-       margin: 20px auto 0;
-       background-color: #c8b653;
-       color: #fff;
+     .instructions-close-btn {
+       align-self: flex-end;
+       flex-shrink: 0;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       padding: 8px;
+       margin: 0 0 8px auto;
        border: none;
-       padding: 10px 30px;
-       border-radius: 5px;
+       border-radius: 99px;
+       background: #ffffff;
        cursor: pointer;
-       font-size: 1.1rem;
+       color: #7c858c;
      }
 
-     #instructions-start:hover {
-       background-color: #b0a045;
+     @media (min-width: 768px) {
+       #instructions-modal.instructions-modal {
+        align-items: center;
+         padding: 32px 32px;
+         height: 100%;
+       }
+
+       #instructions-content {
+         max-width: 50%;
+         width: 100%;
+         margin-bottom: 32px;
+         height: auto;
+         min-height: 0;
+         max-height: calc(100vh - 32px - 32px);
+         max-height: calc(100dvh - 32px - 32px);
+         border-radius: 8px 8px 8px 8px;
+       }
+     }
+
+     .instructions-close-btn:hover {
+       opacity: 0.88;
+     }
+
+     .instructions-close-icon {
+       display: block;
+     }
+
+     .instructions-heading-block {
+       display: flex;
+       flex-direction: column;
+       gap: 8px;
+       text-align: left;
+     }
+
+     .instructions-h2 {
+       margin: 0;
+       font-size: 24px;
+       font-weight: 700;
+       line-height: 24px;
+       letter-spacing: -0.02em;
+       color: #1f2025;
+     }
+
+     .instructions-lead {
+       margin: 0;
+       font-size: 20px;
+       font-weight: 400;
+       line-height: 24px;
+       color: #697177;
+     }
+
+     .instructions-rules,
+     .instructions-mistake {
+       display: flex;
+       flex-direction: column;
+       gap: 8px;
+       text-align: left;
+     }
+
+     .instructions-examples {
+       display: flex;
+       flex-direction: column;
+       gap: 16px;
+       text-align: left;
+     }
+
+     .instructions-h4 {
+       margin: 0;
+       font-size: 16px;
+       font-weight: 700;
+       line-height: 20px;
+       color: #1f2025;
+     }
+
+     .instructions-ol {
+       margin: 0;
+       padding-left: 1.35rem;
+       color: #697177;
+       font-size: 16px;
+       font-weight: 400;
+       line-height: 22px;
+     }
+
+     .instructions-li {
+       margin: 0;
+       padding-left: 0.35rem;
+     }
+
+     .instructions-li + .instructions-li {
+       margin-top: 0.5rem;
+     }
+
+     .instructions-li strong {
+       font-weight: 400;
+       color: #1f2025;
+     }
+
+     .instructions-body {
+       margin: 0;
+       font-size: 16px;
+       font-weight: 400;
+       line-height: 22px;
+       color: #697177;
+     }
+
+     .instructions-example-row {
+       display: flex;
+       flex-wrap: wrap;
+       align-items: center;
+       gap: 16px;
+     }
+
+     .instructions-example-card {
+       width: 88px;
+       height: 88px;
+       border-radius: 4px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 16px;
+       font-weight: 700;
+       line-height: 20px;
+       color: #ffffff;
+       flex-shrink: 0;
+       text-transform: none;
+     }
+
+     .instructions-example-card--green {
+       background-color: #799534;
+     }
+
+     .instructions-example-card--orange {
+       background-color: #eb6800;
+     }
+
+     .instructions-example-card--blue {
+       background-color: #0062cf;
+     }
+
+     .instructions-example-muted {
+       font-size: 16px;
+       font-weight: 400;
+       line-height: 22px;
+       color: #697177;
      }

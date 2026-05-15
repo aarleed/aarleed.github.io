@@ -60,13 +60,12 @@ let isProcessing = false;
 function showInstructions() {
   if (!localStorage.getItem('hasSeenInstructions')) {
     const instrModal = document.getElementById('instructions-modal');
-    instrModal.style.display = 'block';
+    instrModal.style.display = 'flex';
     const closeInstr = function() {
       instrModal.style.display = 'none';
       localStorage.setItem('hasSeenInstructions', 'true');
     };
     document.getElementById('instructions-close').onclick = closeInstr;
-    document.getElementById('instructions-start').onclick = closeInstr;
     instrModal.onclick = function(event) {
       if (event.target === instrModal) closeInstr();
     };
