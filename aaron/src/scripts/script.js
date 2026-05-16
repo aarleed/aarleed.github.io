@@ -113,8 +113,10 @@ function initBoard() {
   updatePairsCounter();
   updateMovesCounter();
   document.getElementById('total-pairs').textContent = Math.floor(WORDS.length / 2);
-  if (WORDS.length == finished.size || mistakes>6) {
-    endGame(false, mistakes);
+  if (WORDS.length == finished.size || mistakes > 6) {
+    revealAllCards();
+    let dialog = document.getElementById("game-text");
+    dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
   }
 }
 
@@ -346,8 +348,7 @@ initStartScreen();
   var primaryBtn = document.getElementById('start-primary-btn');
   var secondaryBtn = document.getElementById('start-secondary-btn');
 
-  function dismissStartScreen() {
-    startScreen.classList.add('hidden');
+  function startGameplay() {
     localStorage.setItem('hasSeenInstructions', 'true');
     // Briefly show all tiles after start screen is dismissed for new games
     if (finished.size === 0 && mistakes === 0 && !explored.some(Boolean)) {
@@ -362,6 +363,30 @@ initStartScreen();
     // Show distribution modal for completed games
     if (finished.size >= WORDS.length || mistakes > 6) {
       setTimeout(function() { openModal("Statistics:"); }, 500);
+    }
+  }
+
+  function showOnboardingModal(onStart) {
+    var modal = document.getElementById('onboarding-modal');
+    var card = document.getElementById('onboarding-card');
+    var btn = document.getElementById('onboarding-start-btn');
+    modal.style.display = 'flex';
+    btn.onclick = function() {
+      card.classList.add('closing');
+      card.addEventListener('animationend', function() {
+        modal.style.display = 'none';
+        card.classList.remove('closing');
+        onStart();
+      }, { once: true });
+    };
+  }
+
+  function dismissStartScreen() {
+    startScreen.classList.add('hidden');
+    if (!localStorage.getItem('hasSeenInstructions')) {
+      showOnboardingModal(startGameplay);
+    } else {
+      startGameplay();
     }
   }
 
@@ -393,6 +418,7 @@ initStartScreen();
   }
 
   document.getElementById('game-back-btn').addEventListener('click', function() {
+    document.getElementById('modal').style.display = 'none';
     document.getElementById('start-screen').classList.remove('hidden');
   });
 
@@ -637,10 +663,10 @@ function updateHistory(mistakesHistory) {
 function updateDialog(i1, i2, correct) {
   let dialog = document.getElementById("game-text");
   if (correct) {
-    dialog.textContent = WORDS[i1] + " and " + WORDS[i2] + " are a pair!";
+    dialog.textContent = "Nice! You found a pair!";
     updatePairsCounter();
   } else {
-    dialog.textContent = WORDS[i1] + " and " + WORDS[i2] + " are not a pair.";
+    dialog.textContent = "Oops... that's not a pair.";
     updateMistakeDots();
   }
 }
