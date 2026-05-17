@@ -34,6 +34,7 @@ function shuffleArray(array, seed) {
 
 let explored = [];
 let finished = new Set();
+let moves = 0;
 
 
 
@@ -108,10 +109,14 @@ function initBoard() {
   } else {
     newGame(currentDate)
   }
-  let mistakesDialog = document.getElementById("mistakes")
-  mistakesDialog.textContent = "mistakes: " + mistakes;
-  if (WORDS.length == finished.size || mistakes>6) {
-    endGame(false, mistakes);
+  updateMistakeDots();
+  updatePairsCounter();
+  updateMovesCounter();
+  document.getElementById('total-pairs').textContent = Math.floor(WORDS.length / 2);
+  if (WORDS.length == finished.size || mistakes > 6) {
+    revealAllCards();
+    let dialog = document.getElementById("game-text");
+    dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
   }
 }
 
@@ -151,7 +156,6 @@ function fitText(el) {
 }
 
 function initState(previous) {
-  // TODO: give design to tiles?
   if (previous) {
     explored = JSON.parse(localStorage.getItem('explored'));
     const tempArr = JSON.parse(localStorage.getItem('finished'))
@@ -160,42 +164,33 @@ function initState(previous) {
     if (localStorage.getItem('history') != null) {mistakesHistory = JSON.parse(localStorage.getItem('history'))}
   }
   let board = document.getElementById("game-board");
-  for (let i = 0; i < NUMBER_OF_GUESSES; i++) {
-    let row = document.createElement("div");
-    row.className = "letter-row";
+  for (let i = 0; i < WORDS.length; i++) {
+    let card = document.createElement("div");
+    card.className = "card";
 
-    for (let j = 0; j < 4; j++) {
-      let card = document.createElement("div");
-      card.className = "card";
-      
-      let cardInner = document.createElement("div")
-      cardInner.className = "card-inner"
-      card.appendChild(cardInner)
-      let cardFront = document.createElement("div")
-      cardFront.className = "card-front"
-      // let cardText = document.createElement("div")
-      // cardText.className = "card-text"
-      // cardText.textContent =  WORDS[i*4 + j]
-      // cardFront.textContent = WORDS[i*4 + j]
-      let cardBack = document.createElement("div")
-      cardBack.className = "card-back"
-      let cardText = document.createElement("span")
-      cardText.textContent = WORDS[i*4 + j]
-      cardBack.appendChild(cardText)
-      // cardFront.appendChild(cardText); cardBack.appendChild(cardText);
-      cardInner.appendChild(cardFront)
-      cardInner.appendChild(cardBack)
-      if (previous) {
-        if (finished.has(i*4 + j)) {
-          cardBack.style.backgroundColor = "#6ca965"
-          flip(cardInner)
-        }
-      }
-      row.appendChild(card);
+    let cardInner = document.createElement("div");
+    cardInner.className = "card-inner";
+    card.appendChild(cardInner);
+
+    let cardFront = document.createElement("div");
+    cardFront.className = "card-front";
+
+    let cardBack = document.createElement("div");
+    cardBack.className = "card-back";
+    let cardText = document.createElement("span");
+    cardText.textContent = WORDS[i];
+    cardBack.appendChild(cardText);
+
+    cardInner.appendChild(cardFront);
+    cardInner.appendChild(cardBack);
+
+    if (previous && finished.has(i)) {
+      cardBack.style.backgroundColor = "#6ca965";
+      flip(cardInner);
     }
-    board.appendChild(row);
-    row.querySelectorAll('.card-back').forEach(fitText);
+    board.appendChild(card);
   }
+  board.querySelectorAll('.card-back').forEach(fitText);
 }
 
 function openModal(content=null) {
@@ -353,8 +348,7 @@ initStartScreen();
   var primaryBtn = document.getElementById('start-primary-btn');
   var secondaryBtn = document.getElementById('start-secondary-btn');
 
-  function dismissStartScreen() {
-    startScreen.classList.add('hidden');
+  function startGameplay() {
     localStorage.setItem('hasSeenInstructions', 'true');
     // Briefly show all tiles after start screen is dismissed for new games
     if (finished.size === 0 && mistakes === 0 && !explored.some(Boolean)) {
@@ -372,14 +366,43 @@ initStartScreen();
     }
   }
 
+  function showOnboardingModal(onStart) {
+    var modal = document.getElementById('onboarding-modal');
+    var card = document.getElementById('onboarding-card');
+    var btn = document.getElementById('onboarding-start-btn');
+    modal.style.display = 'flex';
+    btn.onclick = function() {
+      card.classList.add('closing');
+      card.addEventListener('animationend', function() {
+        modal.style.display = 'none';
+        card.classList.remove('closing');
+        onStart();
+      }, { once: true });
+    };
+  }
+
+  function dismissStartScreen() {
+    startScreen.classList.add('hidden');
+    if (!localStorage.getItem('hasSeenInstructions')) {
+      showOnboardingModal(startGameplay);
+    } else {
+      startGameplay();
+    }
+  }
+
   primaryBtn.addEventListener('click', function() {
     dismissStartScreen();
   });
 
   secondaryBtn.addEventListener('click', function() {
+    openInstructions();
+  });
+
+  initBoard();
+
+  function openInstructions() {
     var instrModal = document.getElementById('instructions-modal');
     instrModal.style.display = 'flex';
-  
     var closeInstr = function() {
       var content = document.getElementById('instructions-content');
       content.classList.add('instructions-closing');
@@ -388,14 +411,24 @@ initStartScreen();
         content.classList.remove('instructions-closing');
       }, { once: true });
     };
-  
     document.getElementById('instructions-close').onclick = closeInstr;
     instrModal.onclick = function(event) {
       if (event.target === instrModal) closeInstr();
     };
+  }
+
+  document.getElementById('game-back-btn').addEventListener('click', function() {
+    document.getElementById('modal').style.display = 'none';
+    document.getElementById('start-screen').classList.remove('hidden');
   });
 
-  initBoard();
+  document.getElementById('game-stats-btn').addEventListener('click', function() {
+    openModal("Statistics:");
+  });
+
+  document.getElementById('game-help-btn').addEventListener('click', function() {
+    openInstructions();
+  });
 
   if (localStorage.getItem('noIntro')) {
     // skip intro
@@ -431,6 +464,8 @@ const handleClick = (el, index) => {
 
 
 function check(guesses) {
+    moves += 1;
+    updateMovesCounter();
     let card1 = guesses[0][0]
     let idx1 = guesses[0][1]
     let card2 = guesses[1][0]
@@ -552,17 +587,17 @@ function endGame(animate, mistakes) {
       cardELS.forEach(function (el) {
         animateCSS(el, "flipInX");
       })
-      let dialog = document.getElementById("game-dialog");
+      let dialog = document.getElementById("game-text");
       dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
       setTimeout(function () {openModal(tempText)}, 1000)
-    }, 1000) 
-    
+    }, 1000)
+
   } else {
     revealAllCards();
-    let dialog = document.getElementById("game-dialog");
+    let dialog = document.getElementById("game-text");
     dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
     openModal(tempText)
-  }  
+  }
   removeAllListeners()
 }
 
@@ -626,15 +661,30 @@ function updateHistory(mistakesHistory) {
 }
 
 function updateDialog(i1, i2, correct) {
-  // TODO: save dialog somewhere?
-    let dialog = document.getElementById("game-text")
-    let mistakesDialog = document.getElementById("mistakes")
-    mistakesDialog.textContent = "mistakes: " + mistakes;
-    if (correct) {
-      dialog.textContent = WORDS[i1] + " and " + WORDS[i2] + " are a pair! Nice job!"
-    } else {
-      dialog.textContent = WORDS[i1] + " and " + WORDS[i2] + " are not a pair.. try again!"
-    }
+  let dialog = document.getElementById("game-text");
+  if (correct) {
+    dialog.textContent = "Nice! You found a pair!";
+    updatePairsCounter();
+  } else {
+    dialog.textContent = "Oops... that's not a pair.";
+    updateMistakeDots();
+  }
+}
+
+function updateMistakeDots() {
+  const remaining = Math.max(0, 6 - mistakes);
+  const dots = document.querySelectorAll('.mistake-dot');
+  dots.forEach(function(dot, i) {
+    dot.classList.toggle('used', i >= remaining);
+  });
+}
+
+function updatePairsCounter() {
+  document.getElementById('pairs-found').textContent = Math.floor(finished.size / 2);
+}
+
+function updateMovesCounter() {
+  document.getElementById('moves-count').textContent = moves;
 }
 
 // turn card green when you get it right

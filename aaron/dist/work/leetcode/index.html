@@ -1,0 +1,245 @@
+<!DOCTYPE html><html lang="en" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><meta name="description" property="og:description" content="A complete guide on the patterns in LeetCode and general interviewing tips!
+"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v4.4.11"><title>LeetCode Guide</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,700;1,400&family=Rubik:wght@500;600&display=swap" rel="stylesheet"><script>
+	// This code is inlined in the head to make dark mode instant & blocking.
+	const getThemePreference = () => {
+		if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+			return localStorage.getItem('theme');
+		}
+		return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+	};
+	const isDark = getThemePreference() === 'dark';
+	document.documentElement.classList[isDark ? 'add' : 'remove']('theme-dark');
+
+	if (typeof localStorage !== 'undefined') {
+		// Watch the document element and persist user preference when it changes.
+		const observer = new MutationObserver(() => {
+			const isDark = document.documentElement.classList.contains('theme-dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+		});
+		observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+	}
+</script><link rel="stylesheet" href="/_astro/about.Bg0FJzVG.css" />
+<style>a[data-astro-cid-balv45lp]{position:relative;display:flex;place-content:center;text-align:center;padding:.56em 2em;gap:.8em;color:var(--accent-text-over);text-decoration:none;line-height:1.1;border-radius:999rem;overflow:hidden;background:var(--gradient-accent-orange);box-shadow:var(--shadow-md);white-space:nowrap}@media (min-width: 20em){a[data-astro-cid-balv45lp]{font-size:var(--text-lg)}}a[data-astro-cid-balv45lp]:after{content:"";position:absolute;inset:0;pointer-events:none;transition:background-color var(--theme-transition);mix-blend-mode:overlay}a[data-astro-cid-balv45lp]:focus:after,a[data-astro-cid-balv45lp]:hover:after{background-color:hsla(var(--gray-999-basis),.3)}@media (min-width: 50em){a[data-astro-cid-balv45lp]{padding:1.125rem 2.5rem;font-size:var(--text-xl)}}aside[data-astro-cid-rcdzuq3a]{display:flex;flex-direction:column;align-items:center;gap:3rem;border-top:1px solid var(--gray-800);border-bottom:1px solid var(--gray-800);padding:5rem 1.5rem;background-color:var(--gray-999_40);box-shadow:var(--shadow-sm)}h2[data-astro-cid-rcdzuq3a]{font-size:var(--text-xl);text-align:center;max-width:15ch}@media (min-width: 50em){aside[data-astro-cid-rcdzuq3a]{padding:7.5rem;flex-direction:row;flex-wrap:wrap;justify-content:space-between}h2[data-astro-cid-rcdzuq3a]{font-size:var(--text-3xl);text-align:left}}
+svg[data-astro-cid-patnjmll]{vertical-align:middle;width:var(--size, 1em);height:var(--size, 1em)}
+.pill[data-astro-cid-2qeywk4b]{display:flex;padding:.5rem 1rem;gap:.5rem;color:var(--accent-text-over);border:1px solid var(--accent-regular);background-color:var(--accent-regular);border-radius:999rem;font-size:var(--text-md);line-height:1.35;white-space:nowrap}
+header[data-astro-cid-qwekciqp]{padding-bottom:2.5rem;border-bottom:1px solid var(--gray-800)}.back-link[data-astro-cid-qwekciqp]{display:none}.details[data-astro-cid-qwekciqp]{display:flex;flex-direction:column;padding:.5rem;gap:1.5rem;justify-content:space-between;align-items:center}.tags[data-astro-cid-qwekciqp]{display:flex;gap:.5rem}.description[data-astro-cid-qwekciqp]{font-size:var(--text-lg);max-width:54ch}.content[data-astro-cid-qwekciqp]{max-width:65ch;margin-inline:auto}.content[data-astro-cid-qwekciqp]>*+*{margin-top:1rem}.content[data-astro-cid-qwekciqp] h1,.content[data-astro-cid-qwekciqp] h2,.content[data-astro-cid-qwekciqp] h3,.content[data-astro-cid-qwekciqp] h4,.content[data-astro-cid-qwekciqp] h5{margin:1.5rem 0}.content[data-astro-cid-qwekciqp] img{border-radius:1.5rem;box-shadow:var(--shadow-sm);background:var(--gradient-subtle);border:1px solid var(--gray-800)}.content[data-astro-cid-qwekciqp] blockquote{font-size:var(--text-lg);font-family:var(--font-brand);font-weight:600;line-height:1.1;padding-inline-start:1.5rem;border-inline-start:.25rem solid var(--accent-dark);color:var(--gray-0)}.back-link[data-astro-cid-qwekciqp],.content[data-astro-cid-qwekciqp] a{text-decoration:1px solid underline transparent;text-underline-offset:.25em;transition:text-decoration-color var(--theme-transition)}.back-link[data-astro-cid-qwekciqp]:hover,.back-link[data-astro-cid-qwekciqp]:focus,.content[data-astro-cid-qwekciqp] a:hover,.content[data-astro-cid-qwekciqp] a:focus{text-decoration-color:currentColor}@media (min-width: 50em){.back-link[data-astro-cid-qwekciqp]{display:block;align-self:flex-start}.details[data-astro-cid-qwekciqp]{flex-direction:row;gap:2.5rem}.content[data-astro-cid-qwekciqp] blockquote{font-size:var(--text-2xl)}}
+</style><script type="module">addEventListener("load",()=>document.documentElement.classList.add("loaded"));class i extends HTMLElement{constructor(){super(),this.appendChild(this.querySelector("template").content.cloneNode(!0));const e=this.querySelector("button"),t=document.getElementById("menu-content");t.hidden=!0;const n=s=>{e.setAttribute("aria-expanded",s?"true":"false"),t.hidden=!s};e.addEventListener("click",()=>n(t.hidden));const d=s=>{n(s.matches),e.hidden=s.matches},c=window.matchMedia("(min-width: 50em)");d(c),c.addEventListener("change",d)}}customElements.define("menu-button",i);class r extends HTMLElement{constructor(){super();const e=this.querySelector("button"),t=n=>{document.documentElement.classList[n?"add":"remove"]("theme-dark"),e.setAttribute("aria-pressed",String(n))};e.addEventListener("click",()=>t(!this.isDark())),t(this.isDark())}isDark(){return document.documentElement.classList.contains("theme-dark")}}customElements.define("theme-toggle",r);
+</script></head> <body data-astro-cid-37fxchfa> <div class="stack backgrounds" data-astro-cid-37fxchfa> <nav data-astro-cid-dmqpwcec> <div class="menu-header" data-astro-cid-dmqpwcec> <a href="/" class="site-title" data-astro-cid-dmqpwcec> <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 256 256" aria-hidden="true" stroke="url(#icon-gradient-19hm0gypo)" fill="url(#icon-gradient-19hm0gypo)" style="--size:1.6em" class="astro-patnjmll" data-astro-cid-patnjmll> <g data-astro-cid-patnjmll><path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="m80 96 40 32-40 32m56 0h40"/><rect width="192" height="160" x="32" y="48" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="16.97" rx="8.5"/></g> <linearGradient id="icon-gradient-19hm0gypo" x1="23" x2="235" y1="43" y2="202" gradientUnits="userSpaceOnUse" data-astro-cid-patnjmll> <stop stop-color="var(--gradient-stop-1)" data-astro-cid-patnjmll></stop> <stop offset=".5" stop-color="var(--gradient-stop-2)" data-astro-cid-patnjmll></stop> <stop offset="1" stop-color="var(--gradient-stop-3)" data-astro-cid-patnjmll></stop> </linearGradient> </svg> 
+Aaron Lee
+</a> <menu-button data-astro-cid-dmqpwcec> <template data-astro-cid-dmqpwcec> <button class="menu-button" aria-expanded="false" data-astro-cid-dmqpwcec> <span class="sr-only" data-astro-cid-dmqpwcec>Menu</span> <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 256 256" aria-hidden="true" stroke="currentcolor" fill="currentcolor" class="astro-patnjmll" data-astro-cid-patnjmll> <g data-astro-cid-patnjmll><path stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M40 128h176M40 64h176M40 192h176"/></g>  </svg>  </button> </template> </menu-button> </div> <div id="menu-content" data-astro-cid-dmqpwcec> <ul class="nav-items" data-astro-cid-dmqpwcec> <li data-astro-cid-dmqpwcec> <a class="link" href="/" data-astro-cid-dmqpwcec> Home </a> </li><li data-astro-cid-dmqpwcec> <a class="link active" href="/work/" data-astro-cid-dmqpwcec> Projects </a> </li><li data-astro-cid-dmqpwcec> <a class="link" href="/about/" data-astro-cid-dmqpwcec> About </a> </li><li data-astro-cid-dmqpwcec> <a class="link" href="/WordPair/" data-astro-cid-dmqpwcec> WordPair </a> </li> <!-- { label: 'Resume', href: 'https://drive.google.com/file/d/1Hkn2QrbGdr-SG1neehXz7phVbrdEQk5B/view?usp=sharing'} --> <li data-astro-cid-dmqpwcec> <a href="https://drive.google.com/file/d/1Hkn2QrbGdr-SG1neehXz7phVbrdEQk5B/view?usp=sharing" class="link" target="_blank" rel="noopener noreferrer" data-astro-cid-dmqpwcec>
+Resume
+</a> </li> </ul> <div class="menu-footer" data-astro-cid-dmqpwcec> <div class="socials" data-astro-cid-dmqpwcec> <a href="https://www.linkedin.com/in/adl1001/" class="social" data-astro-cid-dmqpwcec> <span class="sr-only" data-astro-cid-dmqpwcec>LinkedIn</span> <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 256 256" aria-hidden="true" stroke="currentcolor" fill="currentcolor" class="astro-patnjmll" data-astro-cid-patnjmll> <g data-astro-cid-patnjmll><rect width="184" height="184" x="36" y="36" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" rx="8"/><path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M120 112v64m-32-64v64m32-36a28 28 0 0 1 56 0v36"/><circle stroke="none" cx="88" cy="80" r="12"/></g>  </svg>  </a><a href="https://github.com/aarleed" class="social" data-astro-cid-dmqpwcec> <span class="sr-only" data-astro-cid-dmqpwcec>GitHub</span> <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 256 256" aria-hidden="true" stroke="currentcolor" fill="currentcolor" class="astro-patnjmll" data-astro-cid-patnjmll> <g data-astro-cid-patnjmll><g stroke-linecap="round" stroke-linejoin="round"><path fill="none" stroke-width="14.7" d="M55.7 167.2c13.9 1 21.3 13.1 22.2 14.6 4.2 7.2 10.4 9.6 18.3 7.1l1.1-3.4a60.3 60.3 0 0 1-25.8-11.9c-12-10.1-18-25.6-18-46.3"/><path fill="none" stroke-width="16" d="M61.4 205.1a24.5 24.5 0 0 1-3-6.1c-3.2-7.9-7.1-10.6-7.8-11.1l-1-.6c-2.4-1.6-9.5-6.5-7.2-13.9 1.4-4.5 6-7.2 12.3-7.2h.8c4 .3 7.6 1.5 10.7 3.2-9.1-10.1-13.6-24.3-13.6-42.3 0-11.3 3.5-21.7 10.1-30.4A46.7 46.7 0 0 1 65 67.3a8.3 8.3 0 0 1 5-4.7c2.8-.9 13.3-2.7 33.2 9.9a105 105 0 0 1 50.5 0c19.9-12.6 30.4-10.8 33.2-9.9 2.3.7 4.1 2.4 5 4.7 5 12.7 4 23.2 2.6 29.4 6.7 8.7 10 18.9 10 30.4 0 42.6-25.8 54.7-43.6 58.7 1.4 4.1 2.2 8.8 2.2 13.7l-.1 23.4v2.3"/><path fill="none" stroke-width="16" d="M160.9 185.7c1.4 4.1 2.2 8.8 2.2 13.7l-.1 23.4v2.3A98.6 98.6 0 1 0 61.4 205c-1.4-2.1-11.3-17.5-11.8-17.8-2.4-1.6-9.5-6.5-7.2-13.9 1.4-4.5 6-7.2 12.3-7.2h.8c4 .3 7.6 1.5 10.7 3.2-9.1-10.1-13.6-24.3-13.6-42.3 0-11.3 3.5-21.7 10.1-30.4A46.4 46.4 0 0 1 65 67.3a8.3 8.3 0 0 1 5-4.7c2.8-.9 13.3-2.7 33.2 9.9a105 105 0 0 1 50.5 0c19.9-12.6 30.4-10.8 33.2-9.9 2.3.7 4.1 2.4 5 4.7 5 12.7 4 23.2 2.6 29.4 6.7 8.7 10 18.9 10 30.4.1 42.6-25.8 54.7-43.6 58.6z"/><path fill="none" stroke-width="18.7" d="m170.1 203.3 17.3-12 17.2-18.7 9.5-26.6v-27.9l-9.5-27.5" /><path fill="none" stroke-width="22.7" d="m92.1 57.3 23.3-4.6 18.7-1.4 29.3 5.4m-110 32.6-8 16-4 21.4.6 20.3 3.4 13" /><path fill="none" stroke-width="13.3" d="M28.8 133a100 100 0 0 0 66.9 94.4v-8.7c-22.4 1.8-33-11.5-35.6-19.8-3.4-8.6-7.8-11.4-8.5-11.8"/></g></g>  </svg>  </a> </div> <div class="theme-toggle" data-astro-cid-dmqpwcec> <theme-toggle data-astro-cid-x3pjskd3> <button data-astro-cid-x3pjskd3> <span class="sr-only" data-astro-cid-x3pjskd3>Dark theme</span> <span class="icon light" data-astro-cid-x3pjskd3><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 256 256" aria-hidden="true" stroke="currentcolor" fill="currentcolor" class="astro-patnjmll" data-astro-cid-patnjmll> <g data-astro-cid-patnjmll><circle cx="128" cy="128" r="60" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M128 36V16M63 63 49 49m-13 79H16m47 65-14 14m79 13v20m65-47 14 14m13-79h20m-47-65 14-14"/></g>  </svg> </span> <span class="icon dark" data-astro-cid-x3pjskd3><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 256 256" aria-hidden="true" stroke="currentcolor" fill="currentcolor" class="astro-patnjmll" data-astro-cid-patnjmll> <g data-astro-cid-patnjmll><path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M216 112V64m24 24h-48m-24-64v32m16-16h-32m65 113A92 92 0 0 1 103 39h0a92 92 0 1 0 114 114Z"/></g>  </svg> </span> </button> </theme-toggle>   </div> </div> </div> </nav>    <div class="stack gap-20" data-astro-cid-qwekciqp> <div class="stack gap-15" data-astro-cid-qwekciqp> <header data-astro-cid-qwekciqp> <div class="wrapper stack gap-2" data-astro-cid-qwekciqp> <a class="back-link" href="/work/" data-astro-cid-qwekciqp><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 256 256" aria-hidden="true" stroke="currentcolor" fill="currentcolor" class="astro-patnjmll" data-astro-cid-patnjmll> <g data-astro-cid-patnjmll><path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M216 128H40m72-72-72 72 72 72"/></g>  </svg>  Work</a> <header class="hero stack gap-4 start" data-astro-cid-bbe6dxrz> <div class="stack gap-2" data-astro-cid-bbe6dxrz> <h1 class="title" data-astro-cid-bbe6dxrz>LeetCode Guide</h1>  </div>  <div class="details" data-astro-cid-qwekciqp> <div class="tags" data-astro-cid-qwekciqp> <div class="pill" data-astro-cid-2qeywk4b>Data Structures</div> <div class="pill" data-astro-cid-2qeywk4b>Algorithms</div>  </div> <p class="description" data-astro-cid-qwekciqp>A complete guide on the patterns in LeetCode and general interviewing tips!
+</p> </div>  </header>  </div> </header> <main class="wrapper" data-astro-cid-qwekciqp> <div class="stack gap-10 content" data-astro-cid-qwekciqp> <img src="/assets/leetcode.png" alt="Soft pink and baby blue water ripples together in a subtle texture." data-astro-cid-qwekciqp> <div class="content" data-astro-cid-qwekciqp> <h2 id="motivation">Motivation</h2>
+<p>This guide assumes basic knowledge of Data Structures! ie. (linked lists, stacks, queues, trees, heaps, sorting, time/space complexity)</p>
+<p>Like many, I’ve had to go through the software engineer recruitment process that unfortunately uses leetcode as a way to test applicants in most cases. Determining applicants is a whole different topic that I won’t comment on, however, as I’m here to provide job-seekers in tech (primarily junior ones) with a LeetCode guide!</p>
+<p>I’m by no means a die-hard at LeetCode, and in some sense this is here for my future use too, but I’ve gotten quite good at it having done so many problems, taking algorithms, teaching data structures, and recognizing patterns with the problems. Pattern recognition is what gets one through Algorithms, (shoutout to my CS 170 Berkeley students/alumnus!) so I hope that this guide will prove useful for you.</p>
+<p>The sections will be split up as follows:</p>
+<ol>
+<li><a href="#general-interviewing-advice">General Interviewing Advice</a></li>
+<li><a href="#leetcode-easy">LeetCode Easy</a></li>
+<li><a href="#leetcode-medium">LeetCode Medium</a></li>
+<li><a href="#leetcode-hard">LeetCode Hard</a></li>
+<li><a href="#dictionary--set--hashmap">Dictionaries/Sets/HashMaps</a></li>
+<li><a href="#linked-lists">Linked Lists</a></li>
+<li><a href="#stacks--queues">Stacks/Queues</a></li>
+<li><a href="#sorting-and-binary-search">Sorting and Binary Search</a></li>
+<li><a href="#arrays">Arrays</a></li>
+<li><a href="#two-pointers">Two Pointers</a></li>
+<li><a href="#intervals">Intervals</a></li>
+<li><a href="#trees">Trees</a></li>
+<li><a href="#graphs--grids">Graphs &#x26; Grids</a></li>
+<li><a href="#heaps-priority-queues">Heaps</a></li>
+<li><a href="#sliding-window">Sliding Window</a></li>
+<li><a href="#greedy-algorithms">Greedy Algorithms</a></li>
+<li><a href="#dynamic-programs-dp--backtrack">Dynamic Programs / Backtrack</a></li>
+<li><a href="#system-design">System Design</a></li>
+</ol>
+<h2 id="general-interviewing-advice">General interviewing advice</h2>
+<ul>
+<li>Practice different types of problems. Start at easy problems and make your way up to hard ones. Most of the time interviewers ask easy-medium level questions. (I’ve found if they ask hard it’s seems unlikely they are actually hiring) <a href="https://algorithmicthinking.github.io/#/">LeetCode 101 Decal at Berkeley</a> and <a href="https://leetcode.com/studyplan/top-interview-150/">LeetCode Top 150</a> are great resources. If you have LeetCode premium you can even look at past interview questions from the company you are interviewing with (assuming it’s a large enough company)!</li>
+<li>If you see a locked leetcode problem (for premium only) look up the problem on google and you’ll likely come across leetcode.ca to see/do the problem.</li>
+<li>Use Python! It has the most support and is easiest to program in</li>
+<li>If you’re comfortable coding in whatever language you are going to use, I recommend just solving the problem with pen &#x26; paper or tablet! Knowing what technique to use naturally leads itself to code. This also allows you to solve more problems in a shorter amount of time.</li>
+<li>Think aloud! it helps the interviewer know what you are thinking of and some interviewers will give hints towards the right algorithm if you do so.</li>
+<li>It’s ok to have a “brute force” algorithm (a perhaps inefficient one), this may often be good enough! especially for CodeSignal (a platform used for testing applicants) problems. But definitely use this as a start and build towards a solution.</li>
+<li>Time/space complexity is usually an added bonus if you know it! Knowing the efficiency of your algorithm is a key factor in engineering, however, so get comfortable analyzing your algorithm.</li>
+<li>Sliding Window, Linked List, Tree, Backtracking problems almost all have nice templates! You’ll be doing the same thing for many of the same type of problems and can use templates provided in the sections below.</li>
+</ul>
+<h2 id="leetcode-easy">LeetCode Easy</h2>
+<p>LeetCode Easy problems can be solved by most programmers with a basic understanding of Data Structures. Not much more needs to be said here other than just use these problems as a starting point, making sure to remember the techniques used to solve these problems based on the setup of the problem. An interviewer will likely give you an easy problem to start the interview.</p>
+<h2 id="leetcode-medium">LeetCode Medium</h2>
+<p>LeetCode Medium Problems are the most common problems you’ll get in interviews. If you are attempting these problems, you should optimally be able to immediately see the question and know how to solve it like &#x3C;30 seconds. Realistically, you’ll maybe need a minute or two to think about it, don’t start coding before you have an idea about how to solve the problem and definitely let the interviewer know what you are thinking of when solving the problem.</p>
+<p>There are tons of these problems, I would start by focussing my practice by the techniques. Again, <a href="https://algorithmicthinking.github.io/#/">LeetCode 101 Decal at Berkeley</a> is a super good resource.</p>
+<h2 id="leetcode-hard">LeetCode Hard</h2>
+<p>Sometimes you’ll encounter problems that are leetcode hard. In these cases, I would have skepticism about hiring, since most people aren’t able to complete these problems in a reasonable amount of time. There are definitely some leetcode hards that are reasonable too, though. However, knowing the patterns described below for different problems and applying them still apply! You may need more specialized knowledge, such as bit masking, union finds, dijkstra’s, etc.</p>
+<h2 id="dictionary--set--hashmap">Dictionary / Set / HashMap</h2>
+<p>Often you’ll need to store information about the state of something when solving a problem. Any sort of data structure can be used, but often times hashmaps/dictionaries/sets are the most useful because of the O(1) lookup times.</p>
+<p>This is evident in <a href="https://leetcode.com/problems/two-sum/">TwoSum</a> and many other problems!</p>
+<p>You will pretty much need to use a hashmap everywhere, so there aren’t too many tricks:</p>
+<ul>
+<li>If you need to store info, think about how to store info the most efficiently. (usually resulting in hashmap)</li>
+<li>Pairs: this keyword usually means a hashmap is needed to store the pair (elem1: elem2)</li>
+</ul>
+<p>Prefix Sum is a variant of these problems. It involves storing for each index of an array, the cumulative sum up to that point. You’ll often come across this when you are dealing with array problems dealing with a conditions relative to a sum.</p>
+<h2 id="linked-lists">Linked Lists</h2>
+<p>You’ll rarely need to use linked lists as a structure to solve problems, but questions with linked lists are common.</p>
+<ul>
+<li>What data should you keep track of? Will likely need to do something with a node (insert it somewhere/delete it). How do you change the connections between nodes?</li>
+<li>cycles? -> dfs, or tortoise and hare algorithm
+<ul>
+<li>tortoise and hare is very advanced but extremely popular among LeetCode enthusiasts, the advantage being cycle detection with O(1) space complexity. Often just noting that you can do this as an improvement is enough and just use DFS (O(n) space complexity) when you want cycle detection.</li>
+</ul>
+</li>
+<li>it helps a lot to draw out these problems!</li>
+</ul>
+<h2 id="stacks--queues">Stacks / Queues</h2>
+<p>For stacks, you’ll likely just use a list in python for the stack properties.</p>
+<p>Use stacks in the following cases:</p>
+<ul>
+<li>You want the LIFO principle. (eg. DFS) or you want to do something with the elements you just recently processed.</li>
+<li>Whenever you see some sort of function-like syntax performing operations with ”()”, ”[]”, etc. If you understand the term “recursive stack” for the compilation of code this is a big hint.</li>
+<li>Use a “monotonic stack” whenever you want a sequence to have the condition: next greater, next smaller, previous greater, previous smaller. Essentially you want a sequence of elements that are increasing, decreasing. (can also be non-increasing/decreasing) Read more here for a template/full guide: <a href="https://leetcode.com/discuss/study-guide/2347639/A-comprehensive-guide-and-template-for-monotonic-stack-based-problems">Monotonic Stack Guide</a></li>
+</ul>
+<p>For queues, almost always it’s natural to just use lists (in Python) to implement the queue properties. Think about what information you need to store in the queue, and does the properties of FIFO actually help?</p>
+<p>Use queues in the following cases:</p>
+<ul>
+<li>You want the FIFO principle. (eg. BFS) keyword “first”; you essentially want to store the previous elements and come back to it</li>
+<li>Sliding Window (may need this to keep track of current window elements, but often not needed)</li>
+</ul>
+<p>Note: using queues as a data structure in a problem is a little uncommon.</p>
+<h2 id="sorting-and-binary-search">Sorting and Binary Search</h2>
+<p>Sorting is a common first step you should think about when given any sort of array-like structure. Then you might ask if binary search can be used to find a particular item?</p>
+<p>Binary Search has the precondition that the structure be sorted. You will often use Binary Search to find a <strong>specific number / item.</strong> If you find yourself thinking: if I find a number and it works, but we can potentially find a “better” one (like a max/min with some condition) if we look a little further, then binary search is likely your answer!</p>
+<p>Occasionally, you might be asked to implement some sort of sorting algorithm from scratch, the easiest is quicksort and should really be the only one you need:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span style="color:#6A737D"># QuickSort algorithm</span></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> qs</span><span style="color:#E1E4E8">(array):</span></span>
+<span class="line"><span style="color:#6A737D">    # use first elem as pivot point </span></span>
+<span class="line"><span style="color:#6A737D">    # (can use any index as pivot)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> array: </span><span style="color:#F97583">return</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#E1E4E8">    pivot </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> array[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    left </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [elem </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> elem </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> array </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> elem </span><span style="color:#F97583">&#x3C;=</span><span style="color:#E1E4E8"> pivot]</span></span>
+<span class="line"><span style="color:#E1E4E8">    right </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [elem </span><span style="color:#F97583">for</span><span style="color:#E1E4E8"> elem </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> array </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> elem </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> pivot]</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> qs(left) </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> [pivot] </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> qs(right)</span></span></code></pre>
+<h2 id="arrays">Arrays</h2>
+<p>Arrays are the most common question in interviews, as pretty much any problem will involve an array. It’s best to go through different techniques you can use, as an array problem will likely fall into a subset of problems with more defined solutions (eg. backtracking).</p>
+<img src="/assets/array_problems.png" alt="array is a superset of other problems">
+<p>A checklist I usually like to ask myself whenever facing an array is the following:</p>
+<ul>
+<li>Is there any advantage to sorting? or is it already sorted?
+<ul>
+<li>If there is, can we use binary search?</li>
+<li>Can we do something with looking at the ends of the array? (Two pointers)</li>
+</ul>
+</li>
+<li>If I see something about a particular subarray (a contiguous sequence of elements in the array) think: sliding window, monotonic stack</li>
+<li>If you have to check a condition with different subarrays does DP/backtracking help? Likely there are repeated calculations</li>
+<li>Is there some sort of relationship between the elements? Think about nodes and perhaps trees/graph -> DFS, BFS, Tree Traversals</li>
+<li>Do you find yourself given/using intervals? Look at the intervals section below!</li>
+</ul>
+<h3 id="two-pointers">Two Pointers</h3>
+<p>If you are looking for a pair of elements or 2 of anything within an array, you’ll find it natural to use 2 pointers to keep track of the elements.</p>
+<p>This comes up often in interviews and you’ll likely be doing something like</p>
+<ol>
+<li>Running from both ends of an array
+<ul>
+<li>One left going towards center; one right going towards center</li>
+</ul>
+</li>
+<li>One slow pointer, one fast pointer.
+<ul>
+<li>Often comes up with Tortoise and Hare, but is pretty uncommon.</li>
+</ul>
+</li>
+<li>One pointer for each array.
+<ul>
+<li>Perform an operation taking both arrays into account</li>
+</ul>
+</li>
+</ol>
+<h3 id="intervals">Intervals</h3>
+<p>Sometimes this comes up in arrays, essentially there are some sort of intervals you have to keep track of and perform operations on.</p>
+<p>One way to think about these problems is that you imagine all of the intervals on an axis and you want to keep track of something. Then thinking about the techniques like sorting and the line sweep algorithm are the first steps that I usually think about.</p>
+<p>For example this could be something like <a href="https://leetcode.com/problems/merge-intervals/">Merge Intervals</a> or <a href="https://leetcode.com/problems/meeting-rooms-ii/">Meeting Rooms II</a></p>
+<p>Line sweep is relatively simple, it involves looking at an axis of data points and going through every one. If you find yourself putting groups of related points in “boxes” aka “intervals” then line sweep is a good algorithm to use. Here’s a very comprehensive guide and list of problems: <a href="https://leetcode.com/discuss/study-guide/2166045/line-sweep-algorithms">Guide</a></p>
+<h2 id="trees">Trees</h2>
+<p>Trees are actually relatively easy, as there are only so many ways to traverse trees:</p>
+<ol>
+<li>BFS</li>
+<li>DFS</li>
+<li>Preorder Traversal</li>
+<li>Inorder Traversal</li>
+<li>Postorder Traversal</li>
+</ol>
+<p>Think about which of these ways apply to the problem, and find if there’s any other information that needs to be kept track of.</p>
+<p>One caveat: Tries
+The use case for tries are pretty intuitive. Think of Google Search, when you’re typing in something, it fills in based on what you’ve types. A trie is a naive attempt at “guessing” based on some directory of words.</p>
+<p>Personally have never had to implement a trie, but supposedly it does come up in interviews? Likely it may be good enough to just note its existence.</p>
+<h2 id="graphs--grids">Graphs &#x26; Grids</h2>
+<p>Graph theory is super complex and interesting! For interviews though, we really only need to know BFS/DFS.</p>
+<p>Creating a graph: Most common way is to use adjacency lists.</p>
+<p>Essentially the relationships look like this:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span>0 : [1,2]</span></span>
+<span class="line"><span>1 : [0]</span></span>
+<span class="line"><span>2 : [0]</span></span></code></pre>
+<p>Where the node 0 has an undirected edge with 1,2</p>
+<p>Grids are one of the most common cases where you’ll need to apply bfs/dfs. These sort of matrix problems essentially always will require BFS/DFS, dp, or a brute force approach. Checking end conditions (eg. end of a row/column) is very important for CodeSignal (a common testing platform) problems.</p>
+<p>The DFS/BFS algorithm are essentially the same, with the difference of a data structure:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">queue</span><span style="color:#F97583">/</span><span style="color:#E1E4E8">stack init</span></span>
+<span class="line"><span style="color:#E1E4E8">visited </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#F97583">while</span><span style="color:#E1E4E8"> queue</span><span style="color:#F97583">/</span><span style="color:#E1E4E8">stack </span><span style="color:#F97583">not</span><span style="color:#E1E4E8"> empty:</span></span>
+<span class="line"><span style="color:#E1E4E8">  pop elem</span></span>
+<span class="line"><span style="color:#F97583">  for</span><span style="color:#E1E4E8"> neighbor </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> neighbors:</span></span>
+<span class="line"><span style="color:#E1E4E8">    pre</span><span style="color:#F97583">-</span><span style="color:#E1E4E8">step</span></span>
+<span class="line"><span style="color:#E1E4E8">    do something (</span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> dfs case recursive call)</span></span>
+<span class="line"><span style="color:#E1E4E8">    post</span><span style="color:#F97583">-</span><span style="color:#E1E4E8">step</span></span></code></pre>
+<p>A very common problem is <a href="https://leetcode.com/problems/rotting-oranges/">rotting oranges</a>.</p>
+<h2 id="heaps-priority-queues">Heaps (priority queues)</h2>
+<p>Heaps are useful in the following cases:</p>
+<ul>
+<li><strong>kth element</strong> of something, kth smallest, kth largest. This is the most frequent use case! Whenever you see <strong>k</strong> almost always start with heap! This can also include a median.</li>
+<li>You care about the frequency associated with an item</li>
+</ul>
+<p>Main advantage of heaps (particularly the binary ones) is that they have O(log n) operations. You can often speed up your algorithm with a heap in the kth element case to O(k log n) instead of sorting and then getting the kth element.</p>
+<p>Make sure you’re familiar with the libraries eg. (heapq for Python). If you need a max heap negate every element!</p>
+<p>Here’s a classic heap problem that comes up frequently in interviews: <a href="https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/description/">kth smallest</a></p>
+<h2 id="sliding-window">Sliding Window</h2>
+<p>As the name suggests sliding window problems are characterized by looking at a subarray or “window” of elements and then shifting the size of the window depending on some conditions.</p>
+<p>Naturally, you should find yourself looking at windows just based on the context of the problem, so these problems aren’t too hard to recognize.</p>
+<p>Most of the time for these problems you can just use the template below (memorize it!), the main issue with these problems is that it takes a while to code so if you get it on a coding assessment be weary of time.</p>
+<p>A great template can be found here: <a href="https://leetcode.com/problems/minimum-window-substring/solutions/26808/here-is-a-10-line-template-that-can-solve-most-substring-problems/">template</a></p>
+<h2 id="greedy-algorithms">Greedy Algorithms</h2>
+<p>Sometimes a greedy algorithm is the best one, something that gets close to the “true” answer, but is not completely optimal can be very useful such is the case in machine learning.</p>
+<p>Greedy algorithms should come fairly naturally and is often one of the first approaches to a problem. You’ll try to get the items/numbers that are “as close” to the answer as possible. Sorting is often a good first step. You might also want to keep track of some items, in which case greedy turns into a DP-like problem. Within interviews, using the greedy approach is slightly uncommon, and if you have a greedy algorithm that gets close, but doesn’t quite solve the question it usually isn’t the approach the interviewer is looking for.</p>
+<h2 id="dynamic-programs-dp--backtrack">Dynamic Programs (DP) / Backtrack</h2>
+<p>If you find yourself completing a problem usually recursively and realize that a calculation that was done previously can be used again. Think DP!</p>
+<ol>
+<li>What do I need to keep track of? and what is the correct subproblem I need to solve?</li>
+<li>What’s the recursive formula?</li>
+<li>What’s the base case?</li>
+</ol>
+<p>Almost always dp problems will be a variant of the main dp problems: longest increasing subsequence, edit distance, knapsack. A great textbook <a href="https://people.eecs.berkeley.edu/~vazirani/algorithms/chap6.pdf">resource</a>. Usually in these types of problems you’ll be looking for the max/min sum of some particular non-contiguous sequence in an array in which case you would need to keep track of usually the max/min so far at some point leading to a natural dp subproblem.</p>
+<p>A classic problem is <a href="https://leetcode.com/problems/house-robber/description/">House Robber</a>.</p>
+<p>You’ll likely not come across problems that require you to keep track of items in two dimensions (think f(i,j) in the recursive formula), but they do appear sometimes.</p>
+<p>Backtracking is also very related to DP. I like to think of it as “going through all possible combinations.” If you find yourself going through combinations in a tree like manner and then needing to go “back up the tree” think backtracking. Luckily there is also a very good resource that describes essentially all backtracking problems: <a href="https://leetcode.com/problems/subsets/solutions/27281/a-general-approach-to-backtracking-questions-in-java-subsets-permutations-combination-sum-palindrome-partitioning/">General Approach to Backtracking</a></p>
+<p>For reference here is the template (pseudocode), solving the problem “Subsets” but can be used for most other backtracking problems:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0"><code><span class="line"><span style="color:#E1E4E8">List</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">List</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">Integer</span><span style="color:#F97583">>></span><span style="color:#B392F0"> subsets</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">int</span><span style="color:#E1E4E8">[] nums) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    Create list of lists with ints</span></span>
+<span class="line"><span style="color:#E1E4E8">    Sort nums</span></span>
+<span class="line"><span style="color:#B392F0">    backtrack</span><span style="color:#E1E4E8">(list, </span><span style="color:#F97583">new</span><span style="color:#E1E4E8"> ArrayList&#x3C;>(), nums, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> list;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">backtrack</span><span style="color:#E1E4E8">(List</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">List</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">Integer</span><span style="color:#F97583">>></span><span style="color:#E1E4E8"> list , List</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">Integer</span><span style="color:#F97583">></span><span style="color:#E1E4E8"> tempList, </span><span style="color:#F97583">int</span><span style="color:#E1E4E8"> [] nums, </span><span style="color:#F97583">int</span><span style="color:#E1E4E8"> start){</span></span>
+<span class="line"><span style="color:#E1E4E8">    list.</span><span style="color:#B392F0">add</span><span style="color:#E1E4E8">(tempList);</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">int</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> start; i </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> nums.length; i</span><span style="color:#F97583">++</span><span style="color:#E1E4E8">){</span></span>
+<span class="line"><span style="color:#E1E4E8">        tempList.</span><span style="color:#B392F0">add</span><span style="color:#E1E4E8">(nums[i]); </span><span style="color:#6A737D">// add element to temp list for future lists w/ this elem</span></span>
+<span class="line"><span style="color:#B392F0">        backtrack</span><span style="color:#E1E4E8">(list, tempList, nums, i </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">); </span><span style="color:#6A737D">// populate all sets with this elem</span></span>
+<span class="line"><span style="color:#E1E4E8">        tempList.</span><span style="color:#B392F0">remove</span><span style="color:#E1E4E8">(tempList.</span><span style="color:#B392F0">size</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">); </span><span style="color:#6A737D">// remove element added</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h2 id="system-design">System Design</h2>
+<p>I’m a junior engineer, so at least within interviews, I don’t really have to be too concerned with system design questions, these are usually reserved for more experienced software engineers with a few years of experience!</p>
+<p>Here’s a pretty good post of case studies on LinkedIn: <a href="https://www.linkedin.com/feed/update/urn:li:activity:7158679108464369665?updateEntityUrn=urn%3Ali%3Afs_updateV2%3A%28urn%3Ali%3Aactivity%3A7158679108464369665%2CFEED_DETAIL%2CEMPTY%2CDEFAULT%2Cfalse%29">read here</a></p> </div> </div> </main> </div> <aside data-astro-cid-rcdzuq3a> <h2 data-astro-cid-rcdzuq3a>Interested in working together?</h2> <a href="mailto:leeaarond(at)berkeley.edu" data-astro-cid-balv45lp>
+Email: leeaarond(at)berkeley.edu
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 256 256" aria-hidden="true" stroke="currentcolor" fill="currentcolor" style="--size:1.2em" class="astro-patnjmll" data-astro-cid-patnjmll> <g data-astro-cid-patnjmll><path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M210.3 35.9 23.9 88.4a8 8 0 0 0-1.2 15l85.6 40.5a7.8 7.8 0 0 1 3.8 3.8l40.5 85.6a8 8 0 0 0 15-1.2l52.5-186.4a7.9 7.9 0 0 0-9.8-9.8Zm-99.4 109.2 45.2-45.2"/></g>  </svg>  </a>  </aside>  </div>  <footer data-astro-cid-sz7xmlte> <div class="group" data-astro-cid-sz7xmlte> <p data-astro-cid-sz7xmlte>
+Designed & Developed with <a href="https://astro.build/" data-astro-cid-sz7xmlte>Astro</a> <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 256 256" aria-hidden="true" stroke="currentcolor" fill="currentcolor" style="--size:1.2em" class="astro-patnjmll" data-astro-cid-patnjmll> <g data-astro-cid-patnjmll><path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M94.1 184.6c-11.4 33.9-56.6 33.9-56.6 33.9s0-45.2 33.9-56.6m124.5-56.5L128 173.3 82.7 128l67.9-67.9C176.3 34.4 202 34.7 213 36.3a7.8 7.8 0 0 1 6.7 6.7c1.6 11 1.9 36.7-23.8 62.4Z"/><path fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M184.6 116.7v64.6a8 8 0 0 1-2.4 5.6l-32.3 32.4a8 8 0 0 1-13.5-4.1l-8.4-41.9m11.3-101.9H74.7a8 8 0 0 0-5.6 2.4l-32.4 32.3a8 8 0 0 0 4.1 13.5l41.9 8.4"/></g>  </svg>  </p> <p data-astro-cid-sz7xmlte>&copy; 2026 Aaron Lee</p> </div> <p class="socials" data-astro-cid-sz7xmlte> <a href="https://www.linkedin.com/in/adl1001/" data-astro-cid-sz7xmlte> LinkedIn</a> <a href="https://github.com/aarleed" data-astro-cid-sz7xmlte> GitHub</a> <!-- <a href="https://codepen.io/me"> CodePen</a> --> </p> </footer>  </div>   </body> </html> 
