@@ -193,72 +193,100 @@ function initState(previous) {
   board.querySelectorAll('.card-back').forEach(fitText);
 }
 
-function openModal(content=null) {
-  var model = document.getElementById('modal')
-  var span = document.getElementById('close')
-  model.style.display = "block"
-  span.onclick = function () {
-    modal.style.display = "none";
-  }
-  window.onclick = function(event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  }
-  if (content) {
-      let modalTextContent = document.getElementById('modal-text')
-      modalTextContent.textContent = content;
+/**
+ * Displays the end-of-game stats sheet with results, distribution chart, and answer pairs.
+ * Slides up from the bottom of the screen.
+ * @param {boolean} won - Whether the player won (true) or lost (false).
+ */
+function showStatsSheet(won) {
+  var sheet = document.getElementById('stats-sheet');
+  var content = document.getElementById('stats-sheet-content');
+  var pairColors = ['#cc2936', '#2d8a4e', '#e5a800', '#0062cf', '#7b2d8b', '#eb6800'];
 
-      // TODO: replace placeholders
-      let gameStats = document.getElementById('game-statistics')
-      gameStats.appendChild(createStatistic("Played", Object.values(mistakesHistory).reduce((a, b) => a + b, 0)))
-      gameStats.appendChild(createStatistic("Win %", calculateWinPerc(mistakesHistory) + "%"))
-      gameStats.appendChild(createStatistic("Current Streak", parseInt(localStorage.getItem('streakCurrent')) || 0))
-      gameStats.appendChild(createStatistic("Max Streak", parseInt(localStorage.getItem('streakMax')) || 0))
-
-      // make graph
-      var data = [{
-        type: 'bar',
-        x: Object.values(mistakesHistory),
-        y: Object.keys(mistakesHistory), 
-        orientation: 'h'
-      }];
-      var layout = {
-        title: 'Mistakes Distribution',
-        yaxis: {
-          title: {
-            text: 'Mistakes'
-          },
-        },
-      };
-      
-      Plotly.newPlot('graph', data, layout);
+  // Header
+  var header = document.getElementById('stats-header');
+  header.innerHTML = '';
+  if (won) {
+    header.innerHTML = '<svg class="stats-icon" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#2d8a4e"/><path d="M14 24l7 7 13-13" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><h2 class="stats-title">Congrats!</h2>';
+  } else {
+    header.innerHTML = '<svg class="stats-icon" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#eb6800"/><path d="M16 16h16v16H16z" stroke="#fff" stroke-width="2.5"/><path d="M24 16v16M16 24h16" stroke="#fff" stroke-width="2"/></svg><h2 class="stats-title">Game over!</h2>';
   }
+
+  // Stats grid
+  var totalPlayed = Object.values(mistakesHistory).reduce(function(a, b) { return a + b; }, 0);
+  var winPerc = totalPlayed > 0 ? Math.round(calculateWinPerc(mistakesHistory)) : 0;
+  var currentStreak = parseInt(localStorage.getItem('streakCurrent')) || 0;
+  var maxStreak = parseInt(localStorage.getItem('streakMax')) || 0;
+  var grid = document.getElementById('stats-grid');
+  grid.innerHTML = '';
+  var statsData = [
+    { value: totalPlayed, label: 'Played' },
+    { value: winPerc + '%', label: 'Wins' },
+    { value: currentStreak, label: 'Current Streak' },
+    { value: maxStreak, label: 'Max Streak' }
+  ];
+  statsData.forEach(function(s) {
+    var card = document.createElement('div');
+    card.className = 'stats-card';
+    card.innerHTML = '<span class="stats-card-value">' + s.value + '</span><span class="stats-card-label">' + s.label + '</span>';
+    grid.appendChild(card);
+  });
+
+  // Distribution bars
+  var barsContainer = document.getElementById('stats-bars');
+  barsContainer.innerHTML = '';
+  var maxVal = Math.max.apply(null, Object.values(mistakesHistory).concat([1]));
+  for (var i = 0; i <= 6; i++) {
+    var key = i + ':';
+    var val = mistakesHistory[key] || 0;
+    var row = document.createElement('div');
+    row.className = 'stats-bar-row';
+    var isHighlight = (i === mistakes && (won || i > 6 ? false : true));
+    // Highlight current game's mistake count
+    var highlightThis = (i === mistakes);
+    var barWidth = Math.max(8, (val / maxVal) * 100);
+    row.innerHTML = '<span class="stats-bar-label">' + i + '</span><div class="stats-bar' + (highlightThis ? ' highlight' : '') + '" style="width:' + barWidth + '%"></div><span class="stats-bar-count">' + val + '</span>';
+    barsContainer.appendChild(row);
+  }
+
+  // Answers pairs
+  var pairsContainer = document.getElementById('stats-pairs');
+  pairsContainer.innerHTML = '';
+  var originalWords = [];
+  for (var key2 of MATCHES.keys()) {
+    originalWords.push([key2, MATCHES.get(key2)]);
+  }
+  originalWords.forEach(function(pair, idx) {
+    var color = pairColors[idx % pairColors.length];
+    var row = document.createElement('div');
+    row.className = 'stats-pair-row';
+    row.innerHTML = '<span class="stats-pair-badge" style="background:' + color + '">' + (idx + 1) + '</span>' +
+      '<span class="stats-pair-word">' + pair[0] + '</span>' +
+      '<div class="stats-pair-line" style="background:' + color + '"></div>' +
+      '<span class="stats-pair-word">' + pair[1] + '</span>';
+    pairsContainer.appendChild(row);
+  });
+
+  // Show sheet
+  content.classList.remove('stats-closing');
+  sheet.classList.add('open');
+
+  // Close handler
+  document.getElementById('stats-close').onclick = closeStatsSheet;
+  sheet.onclick = function(e) { if (e.target === sheet) closeStatsSheet(); };
 }
 
-function createStatistic(text, statistic) {
-  // Create a container div
-  let container = document.createElement("div");
-  container.className = "game-stat";
-  container.style.textAlign = 'center';
-
-  // Create a div for the text
-  let textDiv = document.createElement('stat-text');
-  textDiv.textContent = text;
-  textDiv.style.fontWeight = 'bold'; // Adjust styles as needed
-
-  // Create a div for the statistic
-  let statisticDiv = document.createElement('stat');
-  statisticDiv.textContent = statistic;
-  statisticDiv.style.fontWeight = 'bold'; // Adjust styles as needed
-
-  // Append the text and statistic divs to the container
-  container.appendChild(textDiv);
-  container.appendChild(statisticDiv);
-
-  // Return the container div
-  return container;
+function closeStatsSheet() {
+  var sheet = document.getElementById('stats-sheet');
+  var content = document.getElementById('stats-sheet-content');
+  content.classList.add('stats-closing');
+  content.addEventListener('animationend', function() {
+    sheet.classList.remove('open');
+    content.classList.remove('stats-closing');
+  }, { once: true });
 }
+
+
 
 function calculateWinPerc(mistakesHistory) {
   // Calculate the sum of keys 1-6
@@ -360,9 +388,9 @@ initStartScreen();
         addEventListeners();
       }, 1500);
     }
-    // Show distribution modal for completed games
+    // Show stats sheet for completed games
     if (finished.size >= WORDS.length || mistakes > 6) {
-      setTimeout(function() { openModal("Statistics:"); }, 500);
+      setTimeout(function() { showStatsSheet(finished.size >= WORDS.length); }, 500);
     }
   }
 
@@ -418,12 +446,12 @@ initStartScreen();
   }
 
   document.getElementById('game-back-btn').addEventListener('click', function() {
-    document.getElementById('modal').style.display = 'none';
+    closeStatsSheet();
     document.getElementById('start-screen').classList.remove('hidden');
   });
 
   document.getElementById('game-stats-btn').addEventListener('click', function() {
-    openModal("Statistics:");
+    showStatsSheet(finished.size >= WORDS.length);
   });
 
   document.getElementById('game-help-btn').addEventListener('click', function() {
@@ -577,26 +605,25 @@ function revealAllCards() {
 }
 
 function endGame(animate, mistakes) {
-  // openModal, removeEventListeners, set game dialog box
   console.log('End Game')
-  let tempText = "Statistics:"
-  
+  var won = animate; // animate=true means won
+
   if (animate) {
     revealAllCards();
     setTimeout(function () {
-      cardELS.forEach(function (el) {
+      document.querySelectorAll('.card').forEach(function (el) {
         animateCSS(el, "flipInX");
       })
       let dialog = document.getElementById("game-text");
       dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
-      setTimeout(function () {openModal(tempText)}, 1000)
+      setTimeout(function () { showStatsSheet(won); }, 1000)
     }, 1000)
 
   } else {
     revealAllCards();
     let dialog = document.getElementById("game-text");
     dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
-    openModal(tempText)
+    setTimeout(function () { showStatsSheet(won); }, 2000)
   }
   removeAllListeners()
 }

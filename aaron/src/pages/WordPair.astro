@@ -11,7 +11,7 @@ import "../styles/style.css";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WordPair</title>
     <!-- <link rel="stylesheet" href="../styles/style.css"> -->
-    <script src="https://cdn.plot.ly/plotly-2.30.0.min.js" charset="utf-8"></script>
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
     <link
     rel="stylesheet"
@@ -105,12 +105,23 @@ import "../styles/style.css";
         </div>
     </div>
 
-    <div id="modal" class="modal-class">
-        <div id="modal-content">
-            <span id="close" class="close">&times;</span>
-            <p id="modal-text">Welcome! start clicking on the cards and find pairs based on word meanings!</p>
-            <div id="game-statistics"></div>
-            <div id="graph"></div>
+    <div id="stats-sheet" class="stats-sheet" aria-modal="true" role="dialog" aria-label="Game statistics">
+        <div id="stats-sheet-content">
+            <button type="button" id="stats-close" class="stats-close-btn" aria-label="Close statistics">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <div id="stats-header"></div>
+            <div id="stats-grid" class="stats-grid"></div>
+            <div id="stats-distribution">
+                <h3 class="stats-section-title">Mistake Distribution</h3>
+                <div id="stats-bars"></div>
+            </div>
+            <div id="stats-answers">
+                <h3 class="stats-section-title">Answers</h3>
+                <div id="stats-pairs"></div>
+            </div>
         </div>
     </div>
     
