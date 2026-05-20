@@ -1,3 +1,5 @@
+import { VIBRANT, PASTEL, TEXT_LIGHT, TEXT_DARK, DARK_TEXT_VIBRANT_INDEX, GREEN, MAX_MISTAKES } from './config.js';
+
 // Epoch for daily word rotation — all players get the same puzzle on the same day
 const WORD_PAIR_EPOCH = new Date(2025, 4, 1); // May 1, 2025
 
@@ -35,6 +37,23 @@ function shuffleArray(array, seed) {
 let explored = [];
 let finished = new Set();
 let moves = 0;
+
+let pairIndexes = [];
+
+function buildPairIndexes() {
+  var originalPairs = Array.from(MATCHES.keys());
+  pairIndexes = WORDS.map(function(word) {
+    for (var p = 0; p < originalPairs.length; p++) {
+      var w1 = originalPairs[p];
+      if (word === w1 || word === MATCHES.get(w1)) return p;
+    }
+    return 0;
+  });
+}
+
+function getPairIndex(wordIndex) {
+  return pairIndexes[wordIndex];
+}
 
 
 
@@ -89,6 +108,7 @@ function initBoard() {
   const currentDate = new Date()
   let currentDateInt = getDateInt(currentDate);
   shuffleArray(WORDS, currentDateInt)
+  buildPairIndexes();
   if (lastDate != null) {
     lastDate = new Date(lastDate)
     if (isDiffDay(lastDate, currentDate)) {
@@ -113,7 +133,7 @@ function initBoard() {
   updatePairsCounter();
   updateMovesCounter();
   document.getElementById('total-pairs').textContent = Math.floor(WORDS.length / 2);
-  if (WORDS.length == finished.size || mistakes > 6) {
+  if (WORDS.length == finished.size || mistakes >= MAX_MISTAKES) {
     revealAllCards();
     let dialog = document.getElementById("game-text");
     dialog.textContent = "Nice! You finished with " + mistakes.toString() + " mistakes";
@@ -185,7 +205,9 @@ function initState(previous) {
     cardInner.appendChild(cardBack);
 
     if (previous && finished.has(i)) {
-      cardBack.style.backgroundColor = "#6ca965";
+      var colorIdx = getPairIndex(i) % VIBRANT.length;
+      cardBack.style.backgroundColor = VIBRANT[colorIdx];
+      cardBack.style.color = (colorIdx === DARK_TEXT_VIBRANT_INDEX) ? TEXT_DARK : TEXT_LIGHT;
       flip(cardInner);
     }
     board.appendChild(card);
@@ -329,9 +351,9 @@ function detectStartScreenState() {
   var finishedSet = finishedData ? new Set(JSON.parse(finishedData)) : new Set();
   var storedMistakes = stats ? parseInt(stats) : 0;
   // Need to know WORDS.length — use finishedSet size check against 12 (standard game size)
-  // Actually we check if game is over: finished covers all cards or mistakes > 6
+  // Actually we check if game is over: finished covers all cards or mistakes >= 6
   var exploredArr = exploredData ? JSON.parse(exploredData) : [];
-  if (storedMistakes > 6) return 'lost';
+  if (storedMistakes >= MAX_MISTAKES) return 'lost';
   if (finishedSet.size >= 12) return 'won';
   if (finishedSet.size > 0 || exploredArr.some(Boolean)) return 'resume';
   return 'start';
@@ -389,7 +411,7 @@ initStartScreen();
       }, 1500);
     }
     // Show stats sheet for completed games
-    if (finished.size >= WORDS.length || mistakes > 6) {
+    if (finished.size >= WORDS.length || mistakes >= MAX_MISTAKES) {
       setTimeout(function() { showStatsSheet(finished.size >= WORDS.length); }, 500);
     }
   }
@@ -480,7 +502,7 @@ const handleClick = (el, index) => {
     cardELS.forEach(function (el, index) {
       var listenerFct = function () {handleClick(el, index)}
       eventListeners.push(listenerFct)
-      if (!finished.has(index) && mistakes < 7) {
+      if (!finished.has(index) && mistakes < MAX_MISTAKES) {
         el.addEventListener('click', listenerFct)
       }
     })
@@ -542,10 +564,15 @@ function updateBoard(card1, card2, i1, i2, correct) {
     card1.removeEventListener('click', eventListeners[i1])
     card2.removeEventListener('click', eventListeners[i2])
     setTimeout( function () {
+      var colorIdx = getPairIndex(i1) % VIBRANT.length;
+      var color = VIBRANT[colorIdx];
+      var textColor = (colorIdx === DARK_TEXT_VIBRANT_INDEX) ? TEXT_DARK : TEXT_LIGHT;
       var card1back = card1.querySelector('.card-back')
       var card2back = card2.querySelector('.card-back')
-      card1back.style.backgroundColor = "#6ca965 "
-      card2back.style.backgroundColor = "#6ca965"
+      card1back.style.backgroundColor = color;
+      card2back.style.backgroundColor = color;
+      card1back.style.color = textColor;
+      card2back.style.color = textColor;
       animateCSS(card1, "flipInX"); animateCSS(card2, "flipInX");
       isProcessing = false;
     }, 1000)
@@ -573,15 +600,16 @@ function updateBoard(card1, card2, i1, i2, correct) {
       // add back event listeners
       var cardELS = document.querySelectorAll('.card');
       cardELS.forEach(function (el, index) {
-        if (!finished.has(index) && mistakes < 7) {
+        if (!finished.has(index) && mistakes < MAX_MISTAKES) {
           el.addEventListener('click', eventListeners[index])
         }
       })
       isProcessing = false;
     } , 1000)
-    if (mistakes > 6) {
+    if (mistakes >= MAX_MISTAKES) {
       clearTimeout(flipBackTimeout);
       isProcessing = false;
+      updateMistakeDots();
       mistakesHistory = updateHistory(mistakesHistory)
       localStorage.setItem('history', JSON.stringify(mistakesHistory))
       updateStreaks(false);
@@ -595,11 +623,18 @@ function updateBoard(card1, card2, i1, i2, correct) {
 }
 
 function revealAllCards() {
-  const cardInners = document.querySelectorAll('#game-board .card-inner');
+  var won = (WORDS.length === finished.size);
+
+  var cardInners = document.querySelectorAll('#game-board .card-inner');
   cardInners.forEach(function(inner, i) {
     inner.classList.add('flipCard');
     if (!finished.has(i)) {
-      inner.querySelector('.card-back').style.backgroundColor = '#787c7f';
+      var back = inner.querySelector('.card-back');
+      var colorIdx = getPairIndex(i) % PASTEL.length;
+      back.style.backgroundColor = PASTEL[colorIdx];
+      back.style.color = TEXT_DARK;
+    } else if (won) {
+      // Won: all cards already have vibrant from matching, nothing to do
     }
   });
 }
@@ -699,10 +734,9 @@ function updateDialog(i1, i2, correct) {
 }
 
 function updateMistakeDots() {
-  const remaining = Math.max(0, 6 - mistakes);
   const dots = document.querySelectorAll('.mistake-dot');
   dots.forEach(function(dot, i) {
-    dot.classList.toggle('used', i >= remaining);
+    dot.classList.toggle('used', i >= MAX_MISTAKES - mistakes);
   });
 }
 
