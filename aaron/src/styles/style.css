@@ -866,7 +866,7 @@ body {
   min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 32px;
+  padding: 24px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -1099,7 +1099,7 @@ body {
 
 @media (min-width: 768px) {
   #stats-sheet-card {
-    width: 50%;
+    width: 40%;
     border-radius: 8px;
     margin-bottom: 32px;
     max-height: calc(100dvh - 64px);
