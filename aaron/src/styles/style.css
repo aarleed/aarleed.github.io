@@ -837,9 +837,6 @@ body {
   background: rgba(0,0,0,0.4);
   align-items: flex-end;
   justify-content: center;
-  box-sizing: border-box;
-  overflow: hidden;
-  padding-top: 32px;
 }
 
 .stats-sheet.open {
@@ -848,12 +845,10 @@ body {
 
 #stats-sheet-card {
   width: 100%;
-  max-width: none;
-  height: 100%;
-  max-height: 100%;
+  max-height: 100dvh;
   overflow: hidden;
   background: #f4f4f6;
-  border-radius: 0;
+  border-radius: 8px 8px 0 0;
   padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px));
   box-sizing: border-box;
   display: flex;
@@ -871,7 +866,7 @@ body {
   min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 12px;
+  padding: 32px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -1103,17 +1098,10 @@ body {
 }
 
 @media (min-width: 768px) {
-  .stats-sheet {
-    align-items: center;
-    padding: 32px;
-  }
-
   #stats-sheet-card {
-    max-width: 50%;
-    width: 100%;
-    height: auto;
-    min-height: 0;
-    max-height: calc(100dvh - 64px);
+    width: 50%;
     border-radius: 8px;
+    margin-bottom: 32px;
+    max-height: calc(100dvh - 64px);
   }
 }
