@@ -709,7 +709,8 @@ body {
 }
 
 .game-icon-btn:hover .game-tooltip,
-.instructions-close-btn:hover .game-tooltip {
+.instructions-close-btn:hover .game-tooltip,
+.stats-close-btn:hover .game-tooltip {
   opacity: 1;
 }
 
@@ -836,79 +837,91 @@ body {
   background: rgba(0,0,0,0.4);
   align-items: flex-end;
   justify-content: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding-top: 32px;
 }
 
 .stats-sheet.open {
   display: flex;
 }
 
-#stats-sheet-content {
+#stats-sheet-card {
   width: 100%;
-  max-width: 480px;
+  max-width: none;
+  height: 100%;
   max-height: 100%;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
   background: #f4f4f6;
-  border-radius: 16px 16px 0 0;
-  padding: 16px 24px calc(24px + env(safe-area-inset-bottom, 0px));
+  border-radius: 0;
+  padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px));
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  animation: stats-slide-up 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: sheet-slide-up 0.5s cubic-bezier(0.34, 1.20, 0.64, 1) both;
   font-family: "TeXGyreHeros", ui-sans-serif, sans-serif;
 }
 
-#stats-sheet-content.stats-closing {
-  animation: stats-slide-down 0.3s ease-in both;
+#stats-sheet-card.stats-closing {
+  animation: sheet-slide-down 0.3s cubic-bezier(0.34, 1, 0.64, 1) both !important;
 }
 
-@keyframes stats-slide-up {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-
-@keyframes stats-slide-down {
-  from { transform: translateY(0); }
-  to { transform: translateY(100%); }
+#stats-sheet-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
 .stats-close-btn {
   align-self: flex-end;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  padding: 8px;
+  margin: 0 0 8px auto;
   border: none;
-  border-radius: 50%;
+  border-radius: 99px;
   background: #ffffff;
   cursor: pointer;
   color: #7c858c;
-  flex-shrink: 0;
+  position: relative;
 }
 
 .stats-close-btn:hover {
-  opacity: 0.8;
+  opacity: 0.88;
 }
 
 #stats-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 24px;
 }
 
-.stats-icon {
-  width: 48px;
-  height: 48px;
+.stats-logo {
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  flex-shrink: 0;
+  object-fit: contain;
+  display: block;
 }
 
 .stats-title {
   margin: 0;
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 700;
   color: #1f2025;
+  line-height: 30px;
+  letter-spacing: -0.64px;
+  text-align: center;
 }
 
 .stats-grid {
@@ -921,9 +934,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px;
-  border: 1px solid #dfe1e2;
-  border-radius: 8px;
+  padding: 16px 8px;
+  border-radius: 4px;
   background: #ffffff;
 }
 
@@ -931,61 +943,102 @@ body {
   font-size: 24px;
   font-weight: 700;
   color: #1f2025;
+  letter-spacing: -0.48px;
 }
 
 .stats-card-label {
-  font-size: 14px;
+  font-size: 16px;
   color: #697177;
 }
 
 .stats-section-title {
-  margin: 0 0 12px;
+  margin: 0;
   font-size: 16px;
-  font-weight: 700;
-  color: #1f2025;
+  font-weight: 400;
+  color: #697177;
+}
+
+#stats-distribution {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#stats-answers {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#stats-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .stats-bar-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 16px;
 }
 
 .stats-bar-label {
   width: 16px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
-  color: #1f2025;
+  color: #697177;
   text-align: center;
   flex-shrink: 0;
 }
 
 .stats-bar {
   height: 24px;
-  border-radius: 4px;
-  background: #e0e0e0;
+  background: #dfe1e2;
   min-width: 8px;
   transition: width 0.5s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 4px;
+  box-sizing: border-box;
 }
 
 .stats-bar.highlight {
-  background: #1a237e;
+  background: #08179c;
 }
 
 .stats-bar-count {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
-  color: #1f2025;
-  min-width: 16px;
 }
 
 /* Answers pairs */
+#stats-pairs {
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .stats-pair-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+  gap: 40px;
+}
+
+.stats-pair-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.stats-pair-label {
+  font-size: 16px;
+  font-weight: 400;
+  color: #697177;
 }
 
 .stats-pair-badge {
@@ -995,28 +1048,72 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 700;
-  color: #ffffff;
   flex-shrink: 0;
 }
 
+.stats-pair-words {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
 .stats-pair-word {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   color: #1f2025;
+  white-space: nowrap;
 }
 
 .stats-pair-line {
   flex: 1;
   height: 2px;
-  min-width: 20px;
+  background: currentColor;
+  min-width: 16px;
+  position: relative;
+}
+
+.stats-pair-line::before,
+.stats-pair-line::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.stats-pair-line::before {
+  left: -5px;
+}
+
+.stats-pair-line::after {
+  right: -5px;
+}
+
+.stats-pair-divider {
+  width: 100%;
+  height: 1px;
+  background: #dfe1e2;
 }
 
 @media (min-width: 768px) {
-  #stats-sheet-content {
-    border-radius: 16px;
-    margin-bottom: 32px;
-    max-height: calc(100vh - 64px);
+  .stats-sheet {
+    align-items: center;
+    padding: 32px;
+  }
+
+  #stats-sheet-card {
+    max-width: 50%;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: calc(100dvh - 64px);
+    border-radius: 8px;
   }
 }
