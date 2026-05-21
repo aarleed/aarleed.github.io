@@ -223,7 +223,9 @@ function initState(previous) {
 function showStatsSheet(won) {
   var sheet = document.getElementById('stats-sheet');
   var content = document.getElementById('stats-sheet-content');
-  var pairColors = ['#cc2936', '#2d8a4e', '#e5a800', '#0062cf', '#7b2d8b', '#eb6800'];
+  // Pair colors come from the shared config so the answer-key swatches match
+  // the per-pair card colors used during play and on win.
+  var pairColors = VIBRANT;
 
   // Header
   var header = document.getElementById('stats-header');
@@ -492,6 +494,10 @@ initStartScreen();
 
 const handleClick = (el, index) => {
   if (isProcessing) return;
+  // Defense-in-depth: ignore clicks on already-matched cards. The listener
+  // for a finished card is detached on match, but `finished` is the
+  // authoritative state so we guard here too in case any rebind path slips.
+  if (finished.has(index)) return;
   if (guesses.length === 1 && guesses[0][1] === index) return;
   var cardInnerDiv = el.querySelector('.card-inner');
   flip(cardInnerDiv)
@@ -500,12 +506,21 @@ const handleClick = (el, index) => {
 
   function addEventListeners() {
     cardELS.forEach(function (el, index) {
-      var listenerFct = function () {handleClick(el, index)}
-      eventListeners.push(listenerFct)
-      if (!finished.has(index) && mistakes < MAX_MISTAKES) {
-        el.addEventListener('click', listenerFct)
+      // If this card already has a listener stored from a previous call
+      // (e.g. the new-game preview-flip cycle re-runs addEventListeners()),
+      // detach it before assigning the new one. Otherwise we'd accumulate
+      // handlers on the DOM and the array would grow past its index space,
+      // making `eventListeners[index]` no longer match what's actually bound.
+      var prev = eventListeners[index];
+      if (prev) {
+        el.removeEventListener('click', prev);
       }
-    })
+      var listenerFct = function () { handleClick(el, index); };
+      eventListeners[index] = listenerFct;
+      if (!finished.has(index) && mistakes < MAX_MISTAKES) {
+        el.addEventListener('click', listenerFct);
+      }
+    });
   }
 
   // add eventListeners after board initialization

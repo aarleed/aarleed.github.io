@@ -261,9 +261,8 @@ body {
     .card-front {
       background-color: #ffffff;
     }
-    /* #6ca965 */
     .card-back {
-      background-color: #009952;
+      background-color: #7C858C;
       transform: rotateY(180deg);
       font-size: clamp(0.6rem, 2.5vw, 1rem);
       font-family: "TeXGyreHeros", ui-sans-serif, sans-serif;
