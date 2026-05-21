@@ -8,7 +8,7 @@ export const PURPLE = '#9A38A1';
 
 // Pastel (loss state)
 export const ORANGE_PASTEL = '#F2D8C5';
-export const GREEN_PASTEL = '#CFDEF0';
+export const GREEN_PASTEL = '#D8E5C2';
 export const BLUE_PASTEL = '#CFDEF0';
 export const YELLOW_PASTEL = '#F4E9CC';
 export const RED_PASTEL = '#F0D5D9';
@@ -18,12 +18,15 @@ export const PURPLE_PASTEL = '#E7D8E9';
 export const TEXT_LIGHT = '#ffffff';
 export const TEXT_DARK = '#1F2025';
 
-// Ordered arrays for pair assignment
-export const VIBRANT = [ORANGE, GREEN, BLUE, YELLOW, RED, PURPLE];
-export const PASTEL = [ORANGE_PASTEL, GREEN_PASTEL, BLUE_PASTEL, YELLOW_PASTEL, RED_PASTEL, PURPLE_PASTEL];
+// Ordered arrays for pair assignment.
+// Order matches the Figma stats-sheet "Answers" pair numbering:
+//   Pair 1=RED, 2=GREEN, 3=YELLOW, 4=BLUE, 5=PURPLE, 6=ORANGE.
+// All six are unique so each pair gets its own distinct color.
+export const VIBRANT = [RED, GREEN, YELLOW, BLUE, PURPLE, ORANGE];
+export const PASTEL = [RED_PASTEL, GREEN_PASTEL, YELLOW_PASTEL, BLUE_PASTEL, PURPLE_PASTEL, ORANGE_PASTEL];
 
-// Index of yellow (uses dark text even in vibrant state)
-export const DARK_TEXT_VIBRANT_INDEX = 3;
+// Index of yellow (uses dark text even in vibrant state because the bg is too light for white).
+export const DARK_TEXT_VIBRANT_INDEX = 2;
 
 // Game config
 export const MAX_MISTAKES = 6;
