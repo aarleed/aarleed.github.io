@@ -267,7 +267,7 @@ function showStatsSheet(won) {
     // Highlight current game's mistake count
     var highlightThis = (i === mistakes);
     var barWidth = Math.max(8, (val / maxVal) * 100);
-    var countColor = highlightThis ? '#ffffff' : '#1f2025';
+    var countColor = highlightThis ? TEXT_LIGHT : TEXT_DARK;
     row.innerHTML = '<span class="stats-bar-label">' + i + '</span>' +
       '<div class="stats-bar' + (highlightThis ? ' highlight' : '') + '" style="width:' + barWidth + '%">' +
       '<span class="stats-bar-count" style="color:' + countColor + '">' + val + '</span>' +
