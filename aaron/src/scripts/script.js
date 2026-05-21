@@ -222,18 +222,17 @@ function initState(previous) {
  */
 function showStatsSheet(won) {
   var sheet = document.getElementById('stats-sheet');
-  var content = document.getElementById('stats-sheet-content');
-  // Pair colors come from the shared config so the answer-key swatches match
-  // the per-pair card colors used during play and on win.
+  var content = document.getElementById('stats-sheet-card');
   var pairColors = VIBRANT;
+  var pairTextColors = VIBRANT.map(function(_, i) { return i === DARK_TEXT_VIBRANT_INDEX ? TEXT_DARK : TEXT_LIGHT; });
 
   // Header
   var header = document.getElementById('stats-header');
   header.innerHTML = '';
   if (won) {
-    header.innerHTML = '<svg class="stats-icon" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#2d8a4e"/><path d="M14 24l7 7 13-13" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><h2 class="stats-title">Congrats!</h2>';
+    header.innerHTML = '<img class="stats-logo" src="/wordpair-logo-win.svg" alt="WordPair" /><h2 class="stats-title">Congrats!</h2>';
   } else {
-    header.innerHTML = '<svg class="stats-icon" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#eb6800"/><path d="M16 16h16v16H16z" stroke="#fff" stroke-width="2.5"/><path d="M24 16v16M16 24h16" stroke="#fff" stroke-width="2"/></svg><h2 class="stats-title">Game over!</h2>';
+    header.innerHTML = '<img class="stats-logo" src="/wordpair-logo-loss.svg" alt="WordPair" /><h2 class="stats-title">Game Over!</h2>';
   }
 
   // Stats grid
@@ -244,10 +243,10 @@ function showStatsSheet(won) {
   var grid = document.getElementById('stats-grid');
   grid.innerHTML = '';
   var statsData = [
-    { value: totalPlayed, label: 'Played' },
-    { value: winPerc + '%', label: 'Wins' },
-    { value: currentStreak, label: 'Current Streak' },
-    { value: maxStreak, label: 'Max Streak' }
+    { value: totalPlayed, label: 'played' },
+    { value: winPerc + '%', label: 'wins' },
+    { value: currentStreak, label: 'current streak' },
+    { value: maxStreak, label: 'max streak' }
   ];
   statsData.forEach(function(s) {
     var card = document.createElement('div');
@@ -265,11 +264,14 @@ function showStatsSheet(won) {
     var val = mistakesHistory[key] || 0;
     var row = document.createElement('div');
     row.className = 'stats-bar-row';
-    var isHighlight = (i === mistakes && (won || i > 6 ? false : true));
     // Highlight current game's mistake count
     var highlightThis = (i === mistakes);
     var barWidth = Math.max(8, (val / maxVal) * 100);
-    row.innerHTML = '<span class="stats-bar-label">' + i + '</span><div class="stats-bar' + (highlightThis ? ' highlight' : '') + '" style="width:' + barWidth + '%"></div><span class="stats-bar-count">' + val + '</span>';
+    var countColor = highlightThis ? TEXT_LIGHT : TEXT_DARK;
+    row.innerHTML = '<span class="stats-bar-label">' + i + '</span>' +
+      '<div class="stats-bar' + (highlightThis ? ' highlight' : '') + '" style="width:' + barWidth + '%">' +
+      '<span class="stats-bar-count" style="color:' + countColor + '">' + val + '</span>' +
+      '</div>';
     barsContainer.appendChild(row);
   }
 
@@ -282,13 +284,25 @@ function showStatsSheet(won) {
   }
   originalWords.forEach(function(pair, idx) {
     var color = pairColors[idx % pairColors.length];
+    var textColor = pairTextColors[idx % pairTextColors.length];
     var row = document.createElement('div');
     row.className = 'stats-pair-row';
-    row.innerHTML = '<span class="stats-pair-badge" style="background:' + color + '">' + (idx + 1) + '</span>' +
-      '<span class="stats-pair-word">' + pair[0] + '</span>' +
-      '<div class="stats-pair-line" style="background:' + color + '"></div>' +
-      '<span class="stats-pair-word">' + pair[1] + '</span>';
+    row.innerHTML =
+      '<div class="stats-pair-meta">' +
+        '<span class="stats-pair-label">Pair</span>' +
+        '<span class="stats-pair-badge" style="background:' + color + ';color:' + textColor + '">' + (idx + 1) + '</span>' +
+      '</div>' +
+      '<div class="stats-pair-words">' +
+        '<span class="stats-pair-word">' + pair[0] + '</span>' +
+        '<div class="stats-pair-line" style="color:' + color + '"></div>' +
+        '<span class="stats-pair-word">' + pair[1] + '</span>' +
+      '</div>';
     pairsContainer.appendChild(row);
+    if (idx < originalWords.length - 1) {
+      var divider = document.createElement('div');
+      divider.className = 'stats-pair-divider';
+      pairsContainer.appendChild(divider);
+    }
   });
 
   // Show sheet
@@ -302,7 +316,7 @@ function showStatsSheet(won) {
 
 function closeStatsSheet() {
   var sheet = document.getElementById('stats-sheet');
-  var content = document.getElementById('stats-sheet-content');
+  var content = document.getElementById('stats-sheet-card');
   content.classList.add('stats-closing');
   content.addEventListener('animationend', function() {
     sheet.classList.remove('open');
