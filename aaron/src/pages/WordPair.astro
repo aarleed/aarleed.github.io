@@ -106,24 +106,21 @@ import "../styles/style.css";
     </div>
 
     <div id="stats-sheet" class="stats-sheet" aria-modal="true" role="dialog" aria-label="Game statistics">
-        <div id="stats-sheet-card">
+        <div id="stats-sheet-content">
             <button type="button" id="stats-close" class="stats-close-btn" aria-label="Close statistics">
-                <svg class="instructions-close-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
-                <span class="game-tooltip" aria-hidden="true">Close</span>
             </button>
-            <div id="stats-sheet-content">
-                <div id="stats-header"></div>
-                <div id="stats-grid" class="stats-grid"></div>
-                <div id="stats-distribution">
-                    <p class="stats-section-title">Mistake Distribution</p>
-                    <div id="stats-bars"></div>
-                </div>
-                <div id="stats-answers">
-                    <p class="stats-section-title">Answers</p>
-                    <div id="stats-pairs"></div>
-                </div>
+            <div id="stats-header"></div>
+            <div id="stats-grid" class="stats-grid"></div>
+            <div id="stats-distribution">
+                <h3 class="stats-section-title">Mistake Distribution</h3>
+                <div id="stats-bars"></div>
+            </div>
+            <div id="stats-answers">
+                <h3 class="stats-section-title">Answers</h3>
+                <div id="stats-pairs"></div>
             </div>
         </div>
     </div>
