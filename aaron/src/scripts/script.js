@@ -316,6 +316,14 @@ function showStatsSheet(won) {
 
 function closeStatsSheet() {
   var sheet = document.getElementById('stats-sheet');
+  // Bail out if the sheet isn't actually open. Otherwise we'd add a
+  // 'stats-closing' class and an animationend listener to a display:none
+  // element. The slide-down animation would never run (so the listener
+  // never fires for it), but the listener stays attached and waits for
+  // ANY subsequent animation on this element. Next time the sheet opens,
+  // the slide-up animationend triggers the stale listener, which then
+  // immediately strips the 'open' class and the sheet flashes shut.
+  if (!sheet.classList.contains('open')) return;
   var content = document.getElementById('stats-sheet-card');
   content.classList.add('stats-closing');
   content.addEventListener('animationend', function() {
@@ -618,8 +626,9 @@ function updateBoard(card1, card2, i1, i2, correct) {
         localStorage.setItem('history', JSON.stringify(mistakesHistory))
         updateStreaks(true);
         endGame(true, mistakes);
-        
-        return;
+        // Fall through to updateDialog so pairs-found gets bumped to 6 on the
+        // winning move. Previously this branch returned early, leaving the
+        // counter stuck at "5 of 6" until the user reopened the page.
     }
   } else {
     setTimeout(function () {

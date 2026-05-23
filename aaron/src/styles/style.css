@@ -119,6 +119,19 @@
   letter-spacing: 0;
   cursor: pointer;
   text-align: center;
+  /* Smooth color changes on hover/active. Without this, the instant color
+     swap looks janky on a pill-shaped button. */
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+/* Use a custom focus-visible ring instead of the browser default. The default
+   outline-style:auto does NOT smoothly trace a 999px border-radius — it
+   stair-steps around the curve and reads as a "pixelated" focus ring.
+   A solid outline with an offset DOES follow the border-radius cleanly. */
+#start-primary-btn:focus-visible,
+#start-secondary-btn:focus-visible {
+  outline: 2px solid var(--wp-fill-brand);
+  outline-offset: 2px;
 }
 
 #start-primary-btn {
