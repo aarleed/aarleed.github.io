@@ -74,7 +74,7 @@ let mistakesHistory = {
   "6:":0,
   "7+:":0
 }
-let guesses = [];
+let currentPair = [];
 let isProcessing = false;
 
 function showInstructions() {
@@ -512,7 +512,7 @@ const handleClick = (el, index) => {
   // for a finished card is detached on match, but `finished` is the
   // authoritative state so we guard here too in case any rebind path slips.
   if (finished.has(index)) return;
-  if (guesses.length === 1 && guesses[0][1] === index) return;
+  if (currentPair.length === 1 && currentPair[0].index === index) return;
   var cardInnerDiv = el.querySelector('.card-inner');
   flip(cardInnerDiv)
   explore(el, index)
@@ -542,34 +542,39 @@ const handleClick = (el, index) => {
 })();
 
 
-function check(guesses) {
+function check(currentPair) {
     moves += 1;
     updateMovesCounter();
-    let card1 = guesses[0][0]
-    let idx1 = guesses[0][1]
-    let card2 = guesses[1][0]
-    let idx2 = guesses[1][1]
-    // TODO: check explored
-    if (MATCHES.get(WORDS[idx1]) === WORDS[idx2] || MATCHES.get(WORDS[idx2]) === WORDS[idx1]) {
+    const [first, second] = currentPair;
+    if (MATCHES.get(WORDS[first.index]) === WORDS[second.index] || MATCHES.get(WORDS[second.index]) === WORDS[first.index]) {
       console.log('correct')
-      updateBoard(card1, card2, idx1, idx2, true)
+      updateBoard(first.el, second.el, first.index, second.index, true)
     } else {
-      // both need to be explored for mistake
-      if (explored[idx1] && explored[idx2]) {
+      // Count a mistake whenever at least one of the two cards was already
+      // explored before this turn. The only "free pass" is when both cards
+      // are fresh — i.e. the player is genuinely seeing the board for the
+      // first time and learning, not guessing against known information.
+      if (first.wasExplored || second.wasExplored) {
         mistakes += 1
         localStorage.setItem('statistics', mistakes.toString())
       }
-      updateBoard(card1, card2, idx1, idx2, false)
+      updateBoard(first.el, second.el, first.index, second.index, false)
     }
    
 }
 
 function explore(el, index) {
-  guesses.push([el, index]);
-  if (guesses.length == 2) {
+  // Capture whether this card was explored BEFORE this click, so check()
+  // can use the pre-turn state instead of the now-mutated explored array.
+  // Without this, click 1 of a turn always sets explored[idx1]=true before
+  // click 2's check() runs, making explored[idx1] indistinguishable from
+  // a card that was actually seen in a prior turn.
+  var wasAlreadyExplored = !!explored[index];
+  currentPair.push({ el: el, index: index, wasExplored: wasAlreadyExplored });
+  if (currentPair.length == 2) {
     isProcessing = true;
-    check(guesses)
-    guesses = []
+    check(currentPair)
+    currentPair = []
   }
 
   if (explored[index] || finished.has(index)) { // alr been explored
