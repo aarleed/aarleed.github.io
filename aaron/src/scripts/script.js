@@ -1,4 +1,5 @@
 import { VIBRANT, PASTEL, TEXT_LIGHT, TEXT_DARK, DARK_TEXT_VIBRANT_INDEX, GREEN, MAX_MISTAKES } from './config.js';
+import { shouldCountMistake, getDayIndex } from './utils.js';
 
 // Epoch for daily word rotation — all players get the same puzzle on the same day
 const WORD_PAIR_EPOCH = new Date(2025, 4, 1); // May 1, 2025
@@ -10,11 +11,9 @@ async function loadWords() {
   const res = await fetch('/words.json');
   const allDays = await res.json();
   const today = new Date();
-  const msPerDay = 86400000;
   // Days since epoch, wrapped to cycle through available word sets.
   // Uses local time so the puzzle changes at each player's midnight (same as Wordle).
-  // The double-modulo handles negative values for dates before the epoch.
-  const dayIndex = ((Math.floor((today - WORD_PAIR_EPOCH) / msPerDay) % allDays.length) + allDays.length) % allDays.length;
+  const dayIndex = getDayIndex(today.getTime(), WORD_PAIR_EPOCH.getTime(), allDays.length);
   WORDS = allDays[dayIndex];
   MATCHES.clear();
   for (let i = 0; i < WORDS.length; i += 2) {
@@ -554,18 +553,18 @@ function check(currentPair) {
     moves += 1;
     updateMovesCounter();
     const [first, second] = currentPair;
-    if (MATCHES.get(WORDS[first.index]) === WORDS[second.index] || MATCHES.get(WORDS[second.index]) === WORDS[first.index]) {
+    const matched = MATCHES.get(WORDS[first.index]) === WORDS[second.index] || MATCHES.get(WORDS[second.index]) === WORDS[first.index];
+    // Mistake counting lives outside the match branch so the rule's full
+    // truth table (matched × wasExplored1 × wasExplored2) is exercised by
+    // shouldCountMistake() in a single place. See utils.js.
+    if (shouldCountMistake(matched, first.wasExplored, second.wasExplored)) {
+      mistakes += 1
+      localStorage.setItem('statistics', mistakes.toString())
+    }
+    if (matched) {
       console.log('correct')
       updateBoard(first.el, second.el, first.index, second.index, true)
     } else {
-      // Count a mistake whenever at least one of the two cards was already
-      // explored before this turn. The only "free pass" is when both cards
-      // are fresh — i.e. the player is genuinely seeing the board for the
-      // first time and learning, not guessing against known information.
-      if (first.wasExplored || second.wasExplored) {
-        mistakes += 1
-        localStorage.setItem('statistics', mistakes.toString())
-      }
       updateBoard(first.el, second.el, first.index, second.index, false)
     }
    
