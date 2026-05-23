@@ -43,3 +43,41 @@ export function getDayIndex(nowMs, epochMs, totalDays) {
   const rawDays = Math.floor((nowMs - epochMs) / msPerDay);
   return ((rawDays % totalDays) + totalDays) % totalDays;
 }
+
+
+/**
+ * Sin-based pseudo-random for an integer seed. Returns a number in [0, 1).
+ * Cheap, deterministic, and good enough for shuffling a 12-card array
+ * (cryptographic quality is not needed). Distinct seeds produce distinct
+ * outputs; consecutive integer seeds give well-spread values in practice.
+ *
+ * @param {number} seed
+ * @returns {number} in [0, 1)
+ */
+export function seededRandom(seed) {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
+/**
+ * In-place Fisher–Yates shuffle driven by a deterministic, seedable PRNG.
+ * Same seed + same input ⇒ same output, so the daily puzzle layout is
+ * stable across reloads on the same date.
+ *
+ * IMPORTANT: the seed is advanced INSIDE this function's scope on every
+ * iteration. Earlier versions advanced it inside the random helper, where
+ * it was a local-parameter mutation that never persisted across calls —
+ * meaning every iteration drew the same number, the shuffle degenerated,
+ * and the original adjacency `[pair0a, pair0b, pair1a, pair1b, …]` was
+ * preserved on the board. That made the game trivially solvable.
+ *
+ * @param {Array} array  - mutated in place
+ * @param {number} seed  - integer seed; same seed gives same permutation
+ */
+export function shuffleArray(array, seed) {
+  for (let i = array.length - 1; i > 0; i--) {
+    seed += 1;
+    const j = Math.floor(seededRandom(seed) * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}

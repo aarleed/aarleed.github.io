@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { shouldCountMistake, getDayIndex } from './utils.js';
+import { shouldCountMistake, getDayIndex, shuffleArray, seededRandom } from './utils.js';
 
 describe('shouldCountMistake — full truth table', () => {
   // Matched pairs are never mistakes regardless of whether the cards
@@ -84,5 +84,97 @@ describe('getDayIndex — daily puzzle rotation', () => {
       expect(idx).toBeGreaterThanOrEqual(0);
       expect(idx).toBeLessThan(TOTAL);
     }
+  });
+});
+
+
+describe('seededRandom', () => {
+  it('returns a value in [0, 1) for arbitrary integer seeds', () => {
+    for (const s of [0, 1, 7, 100, 177986520, -42]) {
+      const v = seededRandom(s);
+      expect(v).toBeGreaterThanOrEqual(0);
+      expect(v).toBeLessThan(1);
+    }
+  });
+
+  it('is deterministic — same seed gives same value', () => {
+    expect(seededRandom(123)).toBe(seededRandom(123));
+    expect(seededRandom(177986520)).toBe(seededRandom(177986520));
+  });
+
+  it('different seeds give different values (spot-check)', () => {
+    expect(seededRandom(1)).not.toBe(seededRandom(2));
+    expect(seededRandom(100)).not.toBe(seededRandom(101));
+  });
+});
+
+describe('shuffleArray', () => {
+  // Builds an array with the same pair structure as the real game:
+  // [pair0a, pair0b, pair1a, pair1b, …]. After a real shuffle, having
+  // all six pairs land in adjacent positions is astronomically unlikely
+  // (≈ 1 in 10^4 for 12 elements with 6 pairs).
+  function pairedDeck() {
+    return ['0a','0b','1a','1b','2a','2b','3a','3b','4a','4b','5a','5b'];
+  }
+
+  function pairsAdjacent(arr) {
+    let count = 0;
+    for (let p = 0; p < 6; p++) {
+      const ai = arr.indexOf(p + 'a');
+      const bi = arr.indexOf(p + 'b');
+      if (Math.abs(ai - bi) === 1) count += 1;
+    }
+    return count;
+  }
+
+  it('is deterministic — same seed and input produce the same permutation', () => {
+    const a = pairedDeck();
+    const b = pairedDeck();
+    shuffleArray(a, 12345);
+    shuffleArray(b, 12345);
+    expect(a).toEqual(b);
+  });
+
+  it('mutates the array in place and returns undefined', () => {
+    const arr = pairedDeck();
+    const result = shuffleArray(arr, 7);
+    expect(result).toBeUndefined();
+    // The reference is the same; the contents are shuffled.
+    expect(arr).toHaveLength(12);
+    expect(arr.sort()).toEqual(pairedDeck().sort());
+  });
+
+  it('different seeds produce different permutations', () => {
+    const a = pairedDeck();
+    const b = pairedDeck();
+    shuffleArray(a, 1);
+    shuffleArray(b, 2);
+    expect(a).not.toEqual(b);
+  });
+
+  it('regression — does NOT preserve original pair adjacency for the buggy real-world seed', () => {
+    // Before the fix: seededRandom was effectively called with the same
+    // seed every iteration, so all six pairs survived the "shuffle" in
+    // adjacent positions on most days. Empirically reproduced for
+    // 2026-05-27 (seed 177986520) where 5 of 6 pairs ended up adjacent.
+    // Locking in: the fixed shuffle does not preserve all six pairs as
+    // adjacent on that seed.
+    const arr = pairedDeck();
+    shuffleArray(arr, 177986520);
+    expect(pairsAdjacent(arr)).toBeLessThan(6);
+  });
+
+  it('actually scrambles — across many seeds, pairs rarely all land adjacent', () => {
+    let allAdjacentCount = 0;
+    for (let s = 0; s < 500; s++) {
+      const arr = pairedDeck();
+      shuffleArray(arr, s);
+      if (pairsAdjacent(arr) === 6) allAdjacentCount += 1;
+    }
+    // With a true Fisher–Yates shuffle the probability of all 6 pairs
+    // landing adjacent is on the order of 1e-4, so over 500 seeds we
+    // expect well under 5% (almost certainly 0–1). The buggy old version
+    // produced "all adjacent" for the majority of seeds.
+    expect(allAdjacentCount).toBeLessThan(25);
   });
 });
