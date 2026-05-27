@@ -509,7 +509,7 @@ body {
      }
 
      .instructions-example-card--green {
-       background-color: #799534;
+       background-color: #009952;
      }
 
      .instructions-example-card--orange {
@@ -839,6 +839,17 @@ body {
 
 /* ---- Stats Sheet ---- */
 
+/* Pre-game header title ("Your Statistics") — Header 2 token: 24px/700/-0.48px */
+.stats-pregame-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: -0.48px;
+  color: #1f2025;
+  width: 100%;
+}
+
 .stats-sheet {
   display: none;
   position: fixed;
@@ -879,7 +890,7 @@ body {
   min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 24px;
+  padding: 0 24px 24px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -893,7 +904,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 8px;
-  margin: 0 0 8px auto;
+  margin: 0 0 0 auto;
   border: none;
   border-radius: 99px;
   background: #ffffff;

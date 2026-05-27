@@ -8,7 +8,7 @@ export const PURPLE = '#9A38A1';
 
 // Pastel (loss state)
 export const ORANGE_PASTEL = '#F2D8C5';
-export const GREEN_PASTEL = '#D8E5C2';
+export const GREEN_PASTEL = '#D0E7DC';
 export const BLUE_PASTEL = '#CFDEF0';
 export const YELLOW_PASTEL = '#F4E9CC';
 export const RED_PASTEL = '#F0D5D9';

@@ -222,13 +222,16 @@ function initState(previous) {
 function showStatsSheet(won) {
   var sheet = document.getElementById('stats-sheet');
   var content = document.getElementById('stats-sheet-card');
+  var gameIsOver = finished.size >= WORDS.length || mistakes >= MAX_MISTAKES;
   var pairColors = VIBRANT;
   var pairTextColors = VIBRANT.map(function(_, i) { return i === DARK_TEXT_VIBRANT_INDEX ? TEXT_DARK : TEXT_LIGHT; });
 
-  // Header
+  // Header — pre-game shows "Your Statistics" title only; post-game shows logo + result
   var header = document.getElementById('stats-header');
   header.innerHTML = '';
-  if (won) {
+  if (!gameIsOver) {
+    header.innerHTML = '<p class="stats-pregame-title">Your Statistics</p>';
+  } else if (won) {
     header.innerHTML = '<img class="stats-logo" src="/wordpair-logo-win.svg" alt="WordPair" /><h2 class="stats-title">Congrats!</h2>';
   } else {
     header.innerHTML = '<img class="stats-logo" src="/wordpair-logo-loss.svg" alt="WordPair" /><h2 class="stats-title">Game Over!</h2>';
@@ -254,7 +257,7 @@ function showStatsSheet(won) {
     grid.appendChild(card);
   });
 
-  // Distribution bars
+  // Distribution bars — only highlight current game's row after the game ends
   var barsContainer = document.getElementById('stats-bars');
   barsContainer.innerHTML = '';
   var maxVal = Math.max.apply(null, Object.values(mistakesHistory).concat([1]));
@@ -263,8 +266,7 @@ function showStatsSheet(won) {
     var val = mistakesHistory[key] || 0;
     var row = document.createElement('div');
     row.className = 'stats-bar-row';
-    // Highlight current game's mistake count
-    var highlightThis = (i === mistakes);
+    var highlightThis = gameIsOver && (i === mistakes);
     var barWidth = Math.max(8, (val / maxVal) * 100);
     var countColor = highlightThis ? TEXT_LIGHT : TEXT_DARK;
     row.innerHTML = '<span class="stats-bar-label">' + i + '</span>' +
@@ -274,35 +276,39 @@ function showStatsSheet(won) {
     barsContainer.appendChild(row);
   }
 
-  // Answers pairs
-  var pairsContainer = document.getElementById('stats-pairs');
-  pairsContainer.innerHTML = '';
-  var originalWords = [];
-  for (var key2 of MATCHES.keys()) {
-    originalWords.push([key2, MATCHES.get(key2)]);
-  }
-  originalWords.forEach(function(pair, idx) {
-    var color = pairColors[idx % pairColors.length];
-    var textColor = pairTextColors[idx % pairTextColors.length];
-    var row = document.createElement('div');
-    row.className = 'stats-pair-row';
-    row.innerHTML =
-      '<div class="stats-pair-meta">' +
-        '<span class="stats-pair-label">Pair</span>' +
-        '<span class="stats-pair-badge" style="background:' + color + ';color:' + textColor + '">' + (idx + 1) + '</span>' +
-      '</div>' +
-      '<div class="stats-pair-words">' +
-        '<span class="stats-pair-word">' + pair[0] + '</span>' +
-        '<div class="stats-pair-line" style="color:' + color + '"></div>' +
-        '<span class="stats-pair-word">' + pair[1] + '</span>' +
-      '</div>';
-    pairsContainer.appendChild(row);
-    if (idx < originalWords.length - 1) {
-      var divider = document.createElement('div');
-      divider.className = 'stats-pair-divider';
-      pairsContainer.appendChild(divider);
+  // Answers section — only visible after the game ends
+  var answersSection = document.getElementById('stats-answers');
+  answersSection.style.display = gameIsOver ? '' : 'none';
+  if (gameIsOver) {
+    var pairsContainer = document.getElementById('stats-pairs');
+    pairsContainer.innerHTML = '';
+    var originalWords = [];
+    for (var key2 of MATCHES.keys()) {
+      originalWords.push([key2, MATCHES.get(key2)]);
     }
-  });
+    originalWords.forEach(function(pair, idx) {
+      var color = pairColors[idx % pairColors.length];
+      var textColor = pairTextColors[idx % pairTextColors.length];
+      var row = document.createElement('div');
+      row.className = 'stats-pair-row';
+      row.innerHTML =
+        '<div class="stats-pair-meta">' +
+          '<span class="stats-pair-label">Pair</span>' +
+          '<span class="stats-pair-badge" style="background:' + color + ';color:' + textColor + '">' + (idx + 1) + '</span>' +
+        '</div>' +
+        '<div class="stats-pair-words">' +
+          '<span class="stats-pair-word">' + pair[0] + '</span>' +
+          '<div class="stats-pair-line" style="color:' + color + '"></div>' +
+          '<span class="stats-pair-word">' + pair[1] + '</span>' +
+        '</div>';
+      pairsContainer.appendChild(row);
+      if (idx < originalWords.length - 1) {
+        var divider = document.createElement('div');
+        divider.className = 'stats-pair-divider';
+        pairsContainer.appendChild(divider);
+      }
+    });
+  }
 
   // Show sheet
   content.classList.remove('stats-closing');
