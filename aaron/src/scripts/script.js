@@ -427,6 +427,23 @@ initStartScreen();
   var primaryBtn = document.getElementById('start-primary-btn');
   var secondaryBtn = document.getElementById('start-secondary-btn');
 
+  function disableCardAnimation() {
+    var container = document.getElementById('card-flip-container');
+    var flipper = document.getElementById('card-flipper');
+    if (container) container.style.animation = 'none';
+    if (flipper) {
+      flipper.style.animation = 'none';
+      flipper.style.transform = 'rotateY(180deg)';
+    }
+  }
+
+  var animTodayStr = toLocalDateStr(new Date());
+  if (localStorage.getItem('mtaCardAnimatedDate') === animTodayStr) {
+    disableCardAnimation();
+  } else {
+    localStorage.setItem('mtaCardAnimatedDate', animTodayStr);
+  }
+
   function startGameplay() {
     localStorage.setItem('hasSeenInstructions', 'true');
     // Briefly show all tiles after start screen is dismissed for new games
@@ -498,6 +515,7 @@ initStartScreen();
 
   document.getElementById('game-back-btn').addEventListener('click', function() {
     closeStatsSheet();
+    disableCardAnimation();
     document.getElementById('start-screen').classList.remove('hidden');
   });
 
