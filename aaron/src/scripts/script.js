@@ -494,6 +494,22 @@ initStartScreen();
     openInstructions();
   });
 
+  document.getElementById('start-test-btn').addEventListener('click', function() {
+    document.getElementById('streak-screen').classList.add('open');
+    setTimeout(function() {
+      document.getElementById('streak-track').classList.add('sliding');
+      document.getElementById('streak-train-container').classList.add('chugging');
+    }, 600);
+  });
+
+  document.getElementById('streak-close').addEventListener('click', function() {
+    document.getElementById('streak-screen').classList.remove('open');
+    setTimeout(function() {
+      document.getElementById('streak-track').classList.remove('sliding');
+      document.getElementById('streak-train-container').classList.remove('chugging');
+    }, 300);
+  });
+
   initBoard();
 
   function openInstructions() {

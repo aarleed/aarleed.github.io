@@ -42,6 +42,7 @@ import "../styles/style.css";
                             <div id="start-buttons">
                                 <button type="button" id="start-primary-btn"></button>
                                 <button type="button" id="start-secondary-btn">How to Play</button>
+                                <button type="button" id="start-test-btn">Test</button>
                             </div>
                         </div>
                     </div>
@@ -138,6 +139,38 @@ import "../styles/style.css";
         </div>
     </div>
     
+    <!-- Streak Animation Screen (test) -->
+    <div id="streak-screen">
+        <button type="button" id="streak-close" aria-label="Close streak animation">
+            <svg class="instructions-close-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+        <div id="streak-main">
+            <div id="streak-top">
+                <p id="streak-label">Current Streak</p>
+                <div id="streak-path">
+                    <div id="streak-track">
+                        <div class="streak-bg-line"></div>
+                        <div class="streak-circ streak-circ-red">
+                            <span class="streak-circ-num">1</span>
+                        </div>
+                        <div class="streak-conn-line streak-conn-red-yellow"></div>
+                        <div class="streak-circ streak-circ-yellow">
+                            <span class="streak-circ-num streak-circ-num-dark">2</span>
+                        </div>
+                        <div class="streak-gray-line"></div>
+                        <div class="streak-bg-line"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="streak-train-container">
+                <img src="/wordpair-train.svg" alt="" />
+                <div id="streak-train-line"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="game-main">
         <div id="game-actions">
             <button type="button" id="game-back-btn" class="game-icon-btn" aria-label="Go back">
