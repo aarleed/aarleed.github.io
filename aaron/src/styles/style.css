@@ -726,7 +726,7 @@ body {
 }
 
 #streak-track.sliding {
-  animation: streak-slide 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: streak-slide 3s cubic-bezier(0.45, 0, 0.55, 1) forwards;
 }
 
 @keyframes streak-slide {
@@ -833,27 +833,48 @@ body {
   padding-top: 6px;
 }
 
-#streak-train-container::before {
+#streak-train-container::before,
+#streak-train-container::after {
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
   width: 60px;
   height: 100%;
-  background: linear-gradient(to right, #F4F4F6, transparent);
   z-index: 2;
   opacity: 0;
   pointer-events: none;
+}
+
+#streak-train-container::before {
+  left: 0;
+  background: linear-gradient(to right, #F4F4F6, transparent);
+}
+
+#streak-train-container::after {
+  right: 0;
+  background: linear-gradient(to left, #F4F4F6, transparent);
 }
 
 #streak-train-container.chugging::before {
   animation: gradient-fade 2s ease-in-out forwards;
 }
 
+#streak-train-container.chugging::after {
+  animation: gradient-fade-right 2.5s ease-in-out forwards;
+}
+
 @keyframes gradient-fade {
   0%   { opacity: 0; }
   20%  { opacity: 1; }
   70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes gradient-fade-right {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  40%  { opacity: 1; }
+  70%  { opacity: 0; }
   100% { opacity: 0; }
 }
 
@@ -880,12 +901,12 @@ body {
 
 @keyframes train-chug {
   0%   { transform: translateX(0); }
-  25%  { transform: translateX(-390px); }
+  40%  { transform: translateX(70px); }
   100% { transform: translateX(0); }
 }
 
 #streak-train-container.chugging img {
-  animation: bounce .6s infinite alternate ease-in-out, train-chug 2.5s cubic-bezier(0.34, 1.2, 0.64, 1) 0.1s forwards;
+  animation: bounce .6s infinite alternate ease-in-out, train-chug 2.2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
 }
 
 
