@@ -42,7 +42,6 @@ import "../styles/style.css";
                             <div id="start-buttons">
                                 <button type="button" id="start-primary-btn"></button>
                                 <button type="button" id="start-secondary-btn">How to Play</button>
-                                <button type="button" id="start-test-btn">Test</button>
                             </div>
                         </div>
                     </div>
@@ -124,6 +123,35 @@ import "../styles/style.css";
                 </svg>
                 <span class="game-tooltip" aria-hidden="true">Close</span>
             </button>
+            <!-- Streak animation — plays first when the sheet opens after a win.
+                 "Done" reveals the stats content below. -->
+            <div id="streak-main">
+                <div id="streak-top">
+                    <p id="streak-label">Current Streak</p>
+                    <div id="streak-path">
+                        <div id="streak-track">
+                            <div class="streak-conn-first"></div>
+                            <div class="streak-circ streak-circ-first">
+                                <span class="streak-circ-num">1</span>
+                            </div>
+                            <div class="streak-conn-line streak-conn"></div>
+                            <div class="streak-circ streak-circ-second">
+                                <span class="streak-circ-num">2</span>
+                            </div>
+                            <div class="streak-gray-line"></div>
+                            <div class="streak-bg-line"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="streak-train-container">
+                    <img src="/wordpair-train.svg" alt="" />
+                    <div id="streak-train-line"></div>
+                </div>
+                <div id="streak-actions">
+                    <button type="button" id="start-add-streak-btn">Add Streak</button>
+                    <button type="button" id="streak-done-btn">Done</button>
+                </div>
+            </div>
             <div id="stats-sheet-content">
                 <div id="stats-header"></div>
                 <div id="stats-grid" class="stats-grid"></div>
@@ -135,38 +163,6 @@ import "../styles/style.css";
                     <p class="stats-section-title">Answers</p>
                     <div id="stats-pairs"></div>
                 </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Streak Animation Screen (test) -->
-    <div id="streak-screen">
-        <button type="button" id="streak-close" aria-label="Close streak animation">
-            <svg class="instructions-close-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-        </button>
-        <div id="streak-main">
-            <div id="streak-top">
-                <p id="streak-label">Current Streak</p>
-                <div id="streak-path">
-                    <div id="streak-track">
-                        <div class="streak-bg-line"></div>
-                        <div class="streak-circ streak-circ-red">
-                            <span class="streak-circ-num">1</span>
-                        </div>
-                        <div class="streak-conn-line streak-conn-red-yellow"></div>
-                        <div class="streak-circ streak-circ-yellow">
-                            <span class="streak-circ-num streak-circ-num-dark">2</span>
-                        </div>
-                        <div class="streak-gray-line"></div>
-                        <div class="streak-bg-line"></div>
-                    </div>
-                </div>
-            </div>
-            <div id="streak-train-container">
-                <img src="/wordpair-train.svg" alt="" />
-                <div id="streak-train-line"></div>
             </div>
         </div>
     </div>
