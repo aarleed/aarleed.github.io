@@ -323,16 +323,8 @@ function showStatsSheet(won, streakInfo) {
   if (streakInfo) {
     streakMain.classList.remove('streak-fading-out');
     streakMain.style.display = 'flex';
-    document.getElementById('streak-done-btn').onclick = function() {
-      // Fade the overlay out to reveal the stats underneath, then hide it once
-      // the fade finishes so it stops capturing clicks.
-      streakMain.classList.add('streak-fading-out');
-      streakMain.addEventListener('transitionend', function hideAfterFade() {
-        streakMain.style.display = 'none';
-        streakMain.classList.remove('streak-fading-out');
-        streakMain.removeEventListener('transitionend', hideAfterFade);
-      }, { once: true });
-    };
+    // The overlay auto-fades into the stats content once the streak animation
+    // finishes (see playStreakAnimation) — no manual "Done" button needed.
   } else {
     streakMain.style.display = 'none';
   }
@@ -407,6 +399,21 @@ function playStreakAnimation(prevStreak, newStreak) {
     track.classList.add('sliding');
     trainContainer.classList.add('chugging');
   }, 600);
+
+  // Once the full animation has played out, fade the overlay out to reveal the
+  // stats content sitting underneath, then hide it so it stops capturing
+  // clicks. Timed to the longest running animation: the sliding classes are
+  // added at 600ms and the gray line finishes growing 3.2s later (2.2s delay +
+  // 1s), so the whole sequence ends at ~3.8s.
+  var streakMain = document.getElementById('streak-main');
+  setTimeout(function() {
+    streakMain.classList.add('streak-fading-out');
+    streakMain.addEventListener('transitionend', function hideAfterFade() {
+      streakMain.style.display = 'none';
+      streakMain.classList.remove('streak-fading-out');
+      streakMain.removeEventListener('transitionend', hideAfterFade);
+    }, { once: true });
+  }, 4000);
 }
 
 
@@ -633,13 +640,14 @@ function attachCardTilt(card, cardInner) {
   });
 
   // Test-only control: bump the streak by 1 and replay the animation.
-  document.getElementById('start-add-streak-btn').addEventListener('click', function() {
-    var prev = parseInt(localStorage.getItem('streakCurrent')) || 1;
-    var next = prev + 1;
-    localStorage.setItem('streakCurrent', next);
-    localStorage.setItem('streakMax', Math.max(next, parseInt(localStorage.getItem('streakMax')) || 0));
-    playStreakAnimation(prev, next);
-  });
+  // Commented out for now — the button is disabled in the template.
+  // document.getElementById('start-add-streak-btn').addEventListener('click', function() {
+  //   var prev = parseInt(localStorage.getItem('streakCurrent')) || 1;
+  //   var next = prev + 1;
+  //   localStorage.setItem('streakCurrent', next);
+  //   localStorage.setItem('streakMax', Math.max(next, parseInt(localStorage.getItem('streakMax')) || 0));
+  //   playStreakAnimation(prev, next);
+  // });
 
   initBoard();
 

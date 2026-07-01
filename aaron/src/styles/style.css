@@ -939,11 +939,11 @@ body {
   to   { translate: 0 -4px; }
 }
 
-/* @keyframes train-chug {
+@keyframes train-chug {
   0%   { transform: translateX(0); }
-  40%  { transform: translateX(-30px); }
+  35%  { transform: translateX(-40px); }
   100% { transform: translateX(0); }
-}*/
+}
 
 #streak-train-container.chugging img {
   animation: bounce .5s infinite alternate ease-in-out, train-chug 2.2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
