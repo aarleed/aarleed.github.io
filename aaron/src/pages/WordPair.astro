@@ -123,6 +123,39 @@ import "../styles/style.css";
                 </svg>
                 <span class="game-tooltip" aria-hidden="true">Close</span>
             </button>
+            <!-- Streak animation — plays first when the sheet opens after a win.
+                 "Done" reveals the stats content below. -->
+            <div id="streak-main">
+                <div id="streak-top">
+                    <p id="streak-label">Current Streak</p>
+                    <div id="streak-path">
+                        <div id="streak-track">
+                            <div class="streak-conn-first"></div>
+                            <div class="streak-circ streak-circ-first">
+                                <span class="streak-circ-num">1</span>
+                            </div>
+                            <div class="streak-conn-line streak-conn"></div>
+                            <div class="streak-circ streak-circ-second">
+                                <span class="streak-circ-num">2</span>
+                            </div>
+                            <div class="streak-gray-line"></div>
+                            <div class="streak-bg-line"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="streak-train-container">
+                    <img src="/wordpair-train.svg" alt="" />
+                    <div id="streak-train-line"></div>
+                </div>
+                <!-- Test controls, commented out for now. The overlay now
+                     auto-fades into the stats content once the animation ends.
+                <div id="streak-actions">
+                    <button type="button" id="start-add-streak-btn">Add Streak</button>
+                    <button type="button" id="streak-done-btn">Done</button>
+                </div>
+                -->
+
+            </div>
             <div id="stats-sheet-content">
                 <div id="stats-header"></div>
                 <div id="stats-grid" class="stats-grid"></div>
@@ -137,7 +170,7 @@ import "../styles/style.css";
             </div>
         </div>
     </div>
-    
+
     <div id="game-main">
         <div id="game-actions">
             <button type="button" id="game-back-btn" class="game-icon-btn" aria-label="Go back">

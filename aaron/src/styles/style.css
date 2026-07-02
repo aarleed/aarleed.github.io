@@ -170,6 +170,7 @@
   height: 219.475px;
   flex-shrink: 0;
   animation: card-enter 1s cubic-bezier(0.68, -0.6, 0.32, 1.2) backwards;
+  transition: transform 0.3s ease;
 }
 
 @keyframes card-enter {
@@ -203,9 +204,11 @@
   height: 100%;
   display: block;
   filter:
-    drop-shadow(0 6.768px 13.251px rgba(31, 32, 37, 0.02))
-    drop-shadow(0 27.072px 13.536px rgba(31, 32, 37, 0.02))
-    drop-shadow(0 60.912px 18.37px rgba(31, 32, 37, 0.01));
+    drop-shadow(65px 97px 33px rgba(0, 0, 0, 0.00))
+    drop-shadow(42px 62px 30px rgba(0, 0, 0, 0.01))
+    drop-shadow(23px 35px 25px rgba(0, 0, 0, 0.04))
+    drop-shadow(10px 15px 19px rgba(0, 0, 0, 0.07))
+    drop-shadow(3px 4px 10px rgba(0, 0, 0, 0.08));
 }
 
 #card-back {
@@ -222,9 +225,11 @@
   height: 100%;
   display: block;
   filter:
-    drop-shadow(0 8.768px 8px rgba(31, 32, 37, 0.01))
-    drop-shadow(0 37.072px 13.536px rgba(31, 32, 37, 0.01))
-    drop-shadow(0 60.912px 18.37px rgba(31, 32, 37, 0.01));
+    drop-shadow(65px 97px 33px rgba(0, 0, 0, 0.00))
+    drop-shadow(42px 62px 30px rgba(0, 0, 0, 0.00))
+    drop-shadow(23px 35px 25px rgba(0, 0, 0, 0.01))
+    drop-shadow(10px 15px 19px rgba(0, 0, 0, 0.02))
+    drop-shadow(3px 4px 10px rgba(0, 0, 0, 0.02));
 }
 
 body {
@@ -602,6 +607,349 @@ body {
       to   { transform: translateY(24px); opacity: 0; }
     }
 
+/* ---- Streak Animation (plays inside the post-game stats sheet) ---- */
+
+/* Overlay covering the whole sheet card while the animation plays. Because the
+   stats content stays in normal flow underneath, the card keeps its usual size
+   and doesn't resize when the overlay is shown or hidden. */
+#streak-main {
+  /* Shared width for the circle/line row and the train row so they line up
+     and the circles/lines never extend past the train's width.
+     --streak-scale shrinks the inner elements (circles, lines, train) by the
+     same proportion so they stay consistent with the narrower container. */
+  --streak-anim-width: 336px;
+  --streak-scale: 0.89;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: #f4f4f6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 24px 12px;
+  box-sizing: border-box;
+  transition: opacity 0.4s ease;
+}
+
+/* Fading out to reveal the stats content sitting underneath the overlay. */
+#streak-main.streak-fading-out {
+  opacity: 0;
+}
+
+#streak-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+#start-add-streak-btn,
+#streak-done-btn {
+  width: 160px;
+  box-sizing: border-box;
+  padding: 16px 24px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 20px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+#streak-done-btn {
+  background-color: #08179c;
+  color: #ffffff;
+  border: none;
+}
+
+#streak-done-btn:hover {
+  background-color: #010d79;
+}
+
+#start-add-streak-btn {
+  background-color: transparent;
+  color: #1f2025;
+  border: 1px solid #7c858c;
+}
+
+#start-add-streak-btn:hover {
+  background-color: #dfe1e2;
+}
+
+#streak-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+}
+
+#streak-path {
+  position: relative;
+  overflow: hidden;
+  height: calc(72px * var(--streak-scale));
+  width: var(--streak-anim-width);
+  max-width: 100%;
+}
+
+#streak-path::before,
+#streak-path::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 60px;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+#streak-path::before {
+  left: 0;
+  background: linear-gradient(to right, #F4F4F6, transparent);
+}
+
+#streak-path::after {
+  right: 0;
+  background: linear-gradient(to left, #F4F4F6, transparent);
+}
+
+/* Track: [bg 160][circle1 72][red-yellow 160][circle2 72][gray 160][bg 160] = 784px
+   circle1 center = 196px from track left
+   circle2 center = 428px from track left  →  slide distance = 232px */
+#streak-track {
+  /* Per-animation colors, set from JS to match the word game card palette.
+     --streak-color-1/2 = circle + line colors, --streak-text-1/2 = number colors. */
+  --streak-color-1: #d82233;
+  --streak-color-2: #f6bc26;
+  --streak-text-1: #ffffff;
+  --streak-text-2: #1f2025;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(calc(-196px * var(--streak-scale))) translateY(-50%);
+  display: flex;
+  align-items: center;
+  will-change: transform;
+}
+
+#streak-track.sliding {
+  animation: streak-slide 1.5s cubic-bezier(0.34, 1.18, 0.9, 1) forwards;
+}
+
+@keyframes streak-slide {
+  from { transform: translateX(calc(-196px * var(--streak-scale))) translateY(-50%); }
+  to   { transform: translateX(calc(-428px * var(--streak-scale))) translateY(-50%); }
+}
+
+.streak-bg-line {
+  width: calc(160px * var(--streak-scale));
+  height: 8px;
+  background-color: #f4f4f6;
+  flex-shrink: 0;
+  border-radius: 0 99px 99px 0;
+}
+
+/* Extend 4px to the right (offset by a matching negative margin so the next
+   circle doesn't move) so the rounded cap tucks under the circle — the circle
+   paints on top, leaving no gap between the line and the circle. */
+.streak-conn-line {
+  width: calc(160px * var(--streak-scale) + 4px);
+  margin-right: -4px;
+  height: 8px;
+  flex-shrink: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  position: relative;
+  border-radius: 0 99px 99px 0;
+}
+
+/* Static incoming line to the left of the first circle, fading into that
+   circle's color — mirrors how .streak-conn fades into color-2 before circle 2. */
+.streak-conn-first {
+  width: calc(160px * var(--streak-scale) + 4px);
+  margin-right: -4px;
+  height: 8px;
+  flex-shrink: 0;
+  background: linear-gradient(to right, #f4f4f6, var(--streak-color-1));
+  border-radius: 0 99px 99px 0;
+}
+
+.streak-conn {
+  background: linear-gradient(to right, #f4f4f6, var(--streak-color-2));
+}
+
+.streak-conn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, var(--streak-color-1), var(--streak-color-2));
+  opacity: 1;
+  border-radius: inherit;
+}
+
+/* Current streak of 0: no prior streak, so hide the incoming line to the LEFT
+   of the "0" circle. The connector between 0 and 1 (right of 0 / left of 1)
+   stays. visibility (not display) keeps the layout so the circles stay
+   centered. */
+#streak-track.first-streak-zero .streak-conn-first {
+  visibility: hidden;
+}
+
+.streak-gray-line {
+  width: calc(160px * var(--streak-scale));
+  height: 8px;
+  background: linear-gradient(to right, #dfe1e2, #f4f4f6);
+  flex-shrink: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  border-radius: 0 99px 99px 0;
+}
+
+#streak-track.sliding .streak-conn-line {
+  animation: streak-line-grow 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+
+#streak-track.sliding .streak-gray-line {
+  animation: streak-line-grow 1s cubic-bezier(0.4, 0, 0.2, 1) 2.2s forwards;
+}
+
+@keyframes streak-line-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+
+
+.streak-circ {
+  width: calc(72px * var(--streak-scale));
+  height: calc(72px * var(--streak-scale));
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.streak-circ-first  { background-color: var(--streak-color-1); }
+.streak-circ-second { background-color: var(--streak-color-2); }
+
+.streak-circ-first .streak-circ-num  { color: var(--streak-text-1); }
+.streak-circ-second .streak-circ-num { color: var(--streak-text-2); }
+
+.streak-circ-num {
+  font-size: calc(40px * var(--streak-scale));
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.8px;
+}
+
+#streak-label {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: -0.48px;
+  color: #1f2025;
+  text-align: center;
+}
+
+#streak-train-container {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+  padding-top: 6px;
+  width: var(--streak-anim-width);
+  max-width: 100%;
+}
+
+#streak-train-container::before,
+#streak-train-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 60px;
+  height: 100%;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#streak-train-container::before {
+  left: 0;
+  background: linear-gradient(to right, #F4F4F6, transparent);
+}
+
+#streak-train-container::after {
+  right: 0;
+  background: linear-gradient(to left, #F4F4F6, transparent);
+}
+
+#streak-train-container.chugging::before {
+  animation: gradient-fade 2s ease-in-out forwards;
+}
+
+#streak-train-container.chugging::after {
+  animation: gradient-fade-right 2.5s ease-in-out forwards;
+}
+
+@keyframes gradient-fade {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes gradient-fade-right {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  40%  { opacity: 1; }
+  70%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+#streak-train-container img {
+  display: block;
+  width: calc(338px * var(--streak-scale));
+  height: calc(94px * var(--streak-scale));
+  animation: bounce 0.8s infinite alternate ease-in-out;
+}
+
+#streak-train-line {
+  width: calc(400px * var(--streak-scale));
+  height: 6px;
+  background: linear-gradient(to right, #F4F4F6, #dfe1e2 10%, #dfe1e2 90%, #F4F4F6);
+  margin-top: -6px;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes bounce {
+  from { translate: 0 0; }
+  to   { translate: 0 -4px; }
+}
+
+@keyframes train-chug {
+  0%   { transform: translateX(0); }
+  35%  { transform: translateX(-40px); }
+  100% { transform: translateX(0); }
+}
+
+#streak-train-container.chugging img {
+  animation: bounce .5s infinite alternate ease-in-out, train-chug 2.2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+
 /* ---- First-time Onboarding Modal ---- */
 
 #onboarding-modal {
@@ -933,6 +1281,7 @@ body {
 }
 
 #stats-sheet-card {
+  position: relative; /* anchor for the streak animation overlay */
   width: 100%;
   max-height: 100dvh;
   overflow: hidden;
@@ -976,6 +1325,7 @@ body {
   cursor: pointer;
   color: #7c858c;
   position: relative;
+  z-index: 6; /* stay above the streak animation overlay */
 }
 
 .stats-close-btn:hover {
@@ -1186,7 +1536,7 @@ body {
   background: #dfe1e2;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1000px) {
   #stats-sheet-card {
     width: 40%;
     border-radius: 8px;
