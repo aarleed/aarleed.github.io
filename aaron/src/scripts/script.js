@@ -317,8 +317,8 @@ function showStatsSheet(won, streakInfo) {
   // Streak phase: when a fresh win supplies streakInfo, play the streak
   // animation first as an opaque overlay ON TOP of the stats content. The
   // stats content stays in normal flow so the sheet keeps its usual size —
-  // the modal doesn't resize during or after the animation. "Done" just
-  // hides the overlay to reveal the stats already sitting underneath.
+  // the modal doesn't resize during or after the animation. The overlay
+  // auto-fades to reveal the stats already sitting underneath.
   var streakMain = document.getElementById('streak-main');
   if (streakInfo) {
     streakMain.classList.remove('streak-fading-out');
@@ -639,16 +639,6 @@ function attachCardTilt(card, cardInner) {
     openInstructions();
   });
 
-  // Test-only control: bump the streak by 1 and replay the animation.
-  // Commented out for now — the button is disabled in the template.
-  // document.getElementById('start-add-streak-btn').addEventListener('click', function() {
-  //   var prev = parseInt(localStorage.getItem('streakCurrent')) || 1;
-  //   var next = prev + 1;
-  //   localStorage.setItem('streakCurrent', next);
-  //   localStorage.setItem('streakMax', Math.max(next, parseInt(localStorage.getItem('streakMax')) || 0));
-  //   playStreakAnimation(prev, next);
-  // });
-
   initBoard();
 
   function openInstructions() {
@@ -803,7 +793,7 @@ function updateBoard(card1, card2, i1, i2, correct) {
         mistakesHistory = updateHistory(mistakesHistory)
         localStorage.setItem('history', JSON.stringify(mistakesHistory))
         var prevStreak = parseInt(localStorage.getItem('streakCurrent')) || 0;
-        var newStreak = updateStreaks(true).currentStreak;
+        var newStreak = recordStreakResult(true).currentStreak;
         endGame(true, mistakes, prevStreak, newStreak);
         // Fall through to updateDialog so pairs-found gets bumped to 6 on the
         // winning move. Previously this branch returned early, leaving the
@@ -834,7 +824,7 @@ function updateBoard(card1, card2, i1, i2, correct) {
       updateMistakeDots();
       mistakesHistory = updateHistory(mistakesHistory)
       localStorage.setItem('history', JSON.stringify(mistakesHistory))
-      updateStreaks(false);
+      recordStreakResult(false);
       endGame(false, mistakes);
       return;
     }
@@ -902,7 +892,7 @@ function toLocalDateStr(d) {
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
 
-function updateStreaks(won) {
+function recordStreakResult(won) {
   let currentStreak = parseInt(localStorage.getItem('streakCurrent')) || 0;
   let maxStreak = parseInt(localStorage.getItem('streakMax')) || 0;
   let lastWinDate = localStorage.getItem('lastWinDate');
