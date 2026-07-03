@@ -823,7 +823,7 @@ function updateBoard(card1, card2, i1, i2, correct) {
         mistakesHistory = updateHistory(mistakesHistory)
         localStorage.setItem('history', JSON.stringify(mistakesHistory))
         var prevStreak = parseInt(localStorage.getItem('streakCurrent')) || 0;
-        var newStreak = recordStreakResult(true).currentStreak;
+        var newStreak = recordDailyStreak().currentStreak;
         endGame(true, mistakes, prevStreak, newStreak);
         // Fall through to updateDialog so pairs-found gets bumped to 6 on the
         // winning move. Previously this branch returned early, leaving the
@@ -854,7 +854,7 @@ function updateBoard(card1, card2, i1, i2, correct) {
       updateMistakeDots();
       mistakesHistory = updateHistory(mistakesHistory)
       localStorage.setItem('history', JSON.stringify(mistakesHistory))
-      recordStreakResult(false);
+      recordDailyStreak();
       endGame(false, mistakes);
       return;
     }
@@ -922,29 +922,29 @@ function toLocalDateStr(d) {
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
 
-function recordStreakResult(won) {
+function recordDailyStreak() {
   let currentStreak = parseInt(localStorage.getItem('streakCurrent')) || 0;
   let maxStreak = parseInt(localStorage.getItem('streakMax')) || 0;
-  let lastWinDate = localStorage.getItem('lastWinDate');
-  if (won) {
-    let today = new Date();
-    let todayStr = toLocalDateStr(today);
-    let lastStr = lastWinDate || null;
-    let yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    let yesterdayStr = toLocalDateStr(yesterday);
-    if (lastStr === todayStr) {
-      // already counted today
-    } else if (lastStr === yesterdayStr) {
-      currentStreak += 1;
-    } else {
-      currentStreak = 1;
-    }
-    maxStreak = Math.max(maxStreak, currentStreak);
-    localStorage.setItem('lastWinDate', todayStr);
+  let lastPlayDate = localStorage.getItem('lastWinDate'); // legacy key name kept for backward compat
+
+  let today = new Date();
+  let todayStr = toLocalDateStr(today);
+  let yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  let yesterdayStr = toLocalDateStr(yesterday);
+
+  if (lastPlayDate === todayStr) {
+    // Already counted today — don't double-increment.
+  } else if (lastPlayDate === yesterdayStr) {
+    // Played yesterday AND today → streak continues.
+    currentStreak += 1;
   } else {
-    currentStreak = 0;
+    // Gap of 2+ days (or first ever game) → start fresh.
+    currentStreak = 1;
   }
+
+  maxStreak = Math.max(maxStreak, currentStreak);
+  localStorage.setItem('lastWinDate', todayStr); // legacy key name
   localStorage.setItem('streakCurrent', currentStreak);
   localStorage.setItem('streakMax', maxStreak);
   return { currentStreak, maxStreak };
