@@ -602,3 +602,19 @@ const animateCSS = (element, animation, prefix = "animate__") =>
   });
 
 
+
+// --- Test controls ---
+// Streak animation test: bump the streak by 1 and replay the animation.
+// Only wired up on the AB-test page (/WordPairABTest/) which acts as the
+// dev/test environment. Removed from the production page per PR #33 review.
+document.getElementById('start-add-streak-btn').addEventListener('click', function() {
+  var prev = parseInt(localStorage.getItem('streakCurrent')) || 1;
+  var next = prev + 1;
+  localStorage.setItem('streakCurrent', next);
+  localStorage.setItem('streakMax', Math.max(next, parseInt(localStorage.getItem('streakMax')) || 0));
+  if (typeof playStreakAnimation === 'function') {
+    playStreakAnimation(prev, next);
+  } else {
+    console.log('playStreakAnimation not available in AB test — streak bumped to', next);
+  }
+});
