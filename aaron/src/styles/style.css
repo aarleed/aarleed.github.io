@@ -1,3 +1,8 @@
+:root {
+  /* Duration/easing for the light<->dark theme fade. */
+  --theme-transition: 0.2s ease-in-out;
+}
+
 /* Start Screen — WordPair Figma tokens (Background/default, Text/*, Fill/brand, Stroke/primary, Title / Header 3 / Body 1 / Button) */
 #start-screen {
   --wp-bg-default: #f4f4f6;
@@ -7,7 +12,7 @@
   --wp-fill-brand: #08179c;
   --wp-fill-brand-hover: #010d79;
   --wp-fill-brand-active: #000852;
-  --wp-stroke-primary: #7c858c;
+  --wp-stroke-primary: #879096;
   --wp-fill-secondary-hover: #dfe1e2;
   --wp-fill-secondary-active: #dfe1e2;
 
@@ -26,6 +31,19 @@
 
 #start-screen.hidden {
   display: none;
+}
+
+#start-theme-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+@media (min-width: 768px) {
+  #start-theme-btn {
+    top: 32px;
+    right: 32px;
+  }
 }
 
 #start-screen-content {
@@ -55,11 +73,17 @@
   width: 100%;
 }
 
-#start-icon {
+#start-icon,
+#start-icon-dark {
   display: block;
   width: clamp(64px, 10vw, 72px);
   height: clamp(64px, 10vw, 72px);
   flex-shrink: 0;
+}
+
+/* Dark-mode logo swap: show the dark variant only when theme-dark is active. */
+#start-icon-dark {
+  display: none;
 }
 
 #start-title {
@@ -345,7 +369,7 @@ body {
       background-color: #ffffff;
     }
     .card-back {
-      background-color: #7C858C;
+      background-color: #879096;
       transform: rotateY(180deg);
       font-size: clamp(0.6rem, 2.5vw, 1rem);
       font-family: "TeXGyreHeros", ui-sans-serif, sans-serif;
@@ -409,7 +433,8 @@ body {
        height: 100%;
        max-height: 100%;
        overflow: hidden;
-       background-color: #f4f4f6;
+       --sheet-bg: #f4f4f6;
+       background-color: var(--sheet-bg);
        border-radius: 0;
        padding: 16px 12px calc(8px + env(safe-area-inset-bottom, 0px)) 12px;
        font-family: "TeXGyreHeros", ui-sans-serif, sans-serif;
@@ -442,7 +467,7 @@ body {
        border-radius: 99px;
        background: #ffffff;
        cursor: pointer;
-       color: #7c858c;
+       color: #879096;
        position: relative;
      }
 
@@ -1103,7 +1128,7 @@ body {
   border-radius: 99px;
   background-color: #ffffff;
   cursor: pointer;
-  color: #7c858c;
+  color: #879096;
   flex-shrink: 0;
   position: relative;
 }
@@ -1144,6 +1169,44 @@ body {
   display: block;
   width: 24px;
   height: 24px;
+}
+
+/* Theme toggle — sun (light) <-> moon (dark) icon swap.
+   Only the icon changes; the theme itself is unchanged for now. */
+.theme-icon-wrap {
+  position: relative;
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.theme-icon {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.3s ease;
+}
+
+/* Light mode (default): sun shown, moon tucked away */
+.theme-icon--sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.theme-icon--moon {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.4);
+}
+
+/* Dark mode: moon shown, sun tucked away */
+.theme-toggle-btn.is-dark .theme-icon--sun {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.4);
+}
+
+.theme-toggle-btn.is-dark .theme-icon--moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
 }
 
 /* Feedback / game text */
@@ -1285,7 +1348,8 @@ body {
   width: 100%;
   max-height: 100dvh;
   overflow: hidden;
-  background: #f4f4f6;
+  --sheet-bg: #f4f4f6;
+  background: var(--sheet-bg);
   border-radius: 8px 8px 0 0;
   padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px));
   box-sizing: border-box;
@@ -1311,6 +1375,37 @@ body {
   gap: 32px;
 }
 
+/* Soften the seam between the fixed header/footer and the scrolling content:
+   a short fade of the sheet background bleeding over the scroll area's top and
+   bottom edges, instead of a hard cut. Overlaps the scroll body via negative
+   margin so it takes up no layout space; --sheet-bg is themed on each card.
+   Hidden by default and revealed by JS only on the edge that has scrolled-away
+   content, so a fully-visible (non-scrolling) sheet shows no fade. */
+.sheet-fade {
+  flex-shrink: 0;
+  height: 24px;
+  z-index: 2;
+  pointer-events: none;
+  position: relative;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.sheet-fade--top {
+  margin-bottom: -24px;
+  background: linear-gradient(to bottom, var(--sheet-bg) 10%, transparent 100%);
+}
+
+.sheet-fade--bottom {
+  margin-top: -24px;
+  background: linear-gradient(to top, var(--sheet-bg) 10%, transparent 100%);
+}
+
+.show-fade-top .sheet-fade--top,
+.show-fade-bottom .sheet-fade--bottom {
+  opacity: 1;
+}
+
 .stats-close-btn {
   align-self: flex-end;
   flex-shrink: 0;
@@ -1323,7 +1418,7 @@ body {
   border-radius: 99px;
   background: #ffffff;
   cursor: pointer;
-  color: #7c858c;
+  color: #879096;
   position: relative;
   z-index: 6; /* stay above the streak animation overlay */
 }
@@ -1543,4 +1638,233 @@ body {
     margin-bottom: 32px;
     max-height: calc(100dvh - 64px);
   }
+}
+
+/* Theme fade — ease themed colors between light/dark instead of an instant cut
+   when the theme toggle flips `theme-dark`. Universal selector (specificity 0)
+   so any element with its own transition (card flip, sheet slide, button hover,
+   stats-bar width) keeps it and is unaffected. */
+* {
+  transition: background-color var(--theme-transition, 0.2s ease-in-out),
+              color var(--theme-transition, 0.2s ease-in-out),
+              border-color var(--theme-transition, 0.2s ease-in-out);
+}
+
+/* ============================================================
+   Dark mode — color overrides only (WordPair Figma dark tokens)
+
+   Mapping from the light-mode tokens to their dark-mode counterparts
+   (Figma node 339:3188 "Dark mode" + "dark / start screen"):
+     Background/default   #f4f4f6 -> #2a2b32
+     Fill/default         #ffffff -> #474952   (cards, sheets, tooltips, icon btns)
+     Text/primary         #1f2025 -> #fcfcfd
+     Text/secondary       #697177 -> #bac0c4
+     Icon/default         #879096 -> #bac0c4
+     Fill/gray/primary    #879096 -> #8d959b   (mistake dots, stroke; card back is #879096 in both modes)
+     Fill/brand + hover/active, Text/inverse, accent cards: unchanged
+   ============================================================ */
+
+/* Start screen — override the scoped color tokens (brand + inverse unchanged) */
+body.theme-dark #start-screen {
+  --wp-bg-default: #2a2b32;
+  --wp-text-primary: #fcfcfd;
+  --wp-text-secondary: #bac0c4;
+  --wp-stroke-primary: #8d959b;
+  --wp-fill-secondary-hover: #474952;
+  --wp-fill-secondary-active: #474952;
+}
+
+/* Swap the start-screen logo for its dark variant (#474952 strokes). */
+body.theme-dark #start-icon {
+  display: none;
+}
+body.theme-dark #start-icon-dark {
+  display: block;
+}
+
+/* The MTA card back contents (date + buttons) sit on the white card image,
+   so they keep the light-mode token colors even in dark mode. */
+body.theme-dark #card-back {
+  --wp-text-primary: #1f2025;
+  --wp-text-secondary: #697177;
+  --wp-stroke-primary: #879096;
+  --wp-fill-secondary-hover: #dfe1e2;
+  --wp-fill-secondary-active: #dfe1e2;
+}
+
+body.theme-dark {
+  background-color: #2a2b32;
+}
+
+/* Legacy modal */
+body.theme-dark #modal-content {
+  background-color: #474952;
+  border-color: #8d959b;
+}
+
+body.theme-dark .close:hover,
+body.theme-dark .close:focus {
+  color: #fcfcfd;
+}
+
+/* Game board cards */
+body.theme-dark .card-front {
+  background-color: #474952;
+}
+
+body.theme-dark .card-back {
+  background-color: #879096;
+}
+
+/* How-to-play sheet */
+body.theme-dark #instructions-content {
+  --sheet-bg: #2a2b32;
+  background-color: var(--sheet-bg);
+}
+
+body.theme-dark .instructions-close-btn {
+  background: #474952;
+  color: #bac0c4;
+}
+
+body.theme-dark .instructions-h2,
+body.theme-dark .instructions-h4,
+body.theme-dark .instructions-li strong {
+  color: #fcfcfd;
+}
+
+body.theme-dark .instructions-lead,
+body.theme-dark .instructions-ol,
+body.theme-dark .instructions-body,
+body.theme-dark .instructions-example-muted {
+  color: #bac0c4;
+}
+
+/* Onboarding modal */
+body.theme-dark #onboarding-card {
+  background: #474952;
+}
+
+body.theme-dark #onboarding-heading {
+  color: #fcfcfd;
+}
+
+body.theme-dark #onboarding-label,
+body.theme-dark #onboarding-rules {
+  color: #bac0c4;
+}
+
+/* Dark-mode brand button (Fill/brand + hover/active dark tokens) */
+body.theme-dark #onboarding-start-btn {
+  background-color: #5464f2;
+}
+
+body.theme-dark #onboarding-start-btn:hover {
+  background-color: #4755d7;
+}
+
+body.theme-dark #onboarding-start-btn:active {
+  background-color: #3342c1;
+}
+
+/* Game screen */
+body.theme-dark .game-icon-btn {
+  background-color: #474952;
+  color: #bac0c4;
+}
+
+body.theme-dark .game-tooltip {
+  background-color: #474952;
+  color: #bac0c4;
+}
+
+body.theme-dark #game-text,
+body.theme-dark .game-stat-label {
+  color: #bac0c4;
+}
+
+body.theme-dark .game-stat-value,
+body.theme-dark #moves-count {
+  color: #fcfcfd;
+}
+
+body.theme-dark .mistake-dot {
+  background-color: #8d959b;
+}
+
+body.theme-dark .mistake-dot.used {
+  background-color: #474952;
+}
+
+/* Stats sheet */
+body.theme-dark #stats-sheet-card {
+  --sheet-bg: #2a2b32;
+  background: var(--sheet-bg);
+}
+
+body.theme-dark .stats-close-btn {
+  background: #474952;
+  color: #bac0c4;
+}
+
+body.theme-dark .stats-pregame-title,
+body.theme-dark .stats-title,
+body.theme-dark .stats-card-value,
+body.theme-dark .stats-pair-word {
+  color: #fcfcfd;
+}
+
+body.theme-dark .stats-card-label,
+body.theme-dark .stats-section-title,
+body.theme-dark .stats-bar-label,
+body.theme-dark .stats-pair-label {
+  color: #bac0c4;
+}
+
+body.theme-dark .stats-card,
+body.theme-dark #stats-pairs {
+  background: #474952;
+}
+
+/* Distribution bar track (highlight bar keeps the brand fill) */
+body.theme-dark .stats-bar {
+  background: #474952;
+}
+
+body.theme-dark .stats-bar.highlight {
+  background: #5464f2;
+}
+
+body.theme-dark .stats-pair-divider {
+  background: #697177;
+}
+
+/* Streak animation — darken only the modal background and the "Current Streak"
+   label. The circles, lines and train keep their existing colors. */
+body.theme-dark #streak-main {
+  background: #2a2b32;
+}
+
+body.theme-dark #streak-label {
+  color: #fcfcfd;
+}
+
+/* Edge fade gradients (streak line row + train row) fade into the dark bg. */
+body.theme-dark #streak-path::before,
+body.theme-dark #streak-train-container::before {
+  background: linear-gradient(to right, #2a2b32, transparent);
+}
+
+body.theme-dark #streak-path::after,
+body.theme-dark #streak-train-container::after {
+  background: linear-gradient(to left, #2a2b32, transparent);
+}
+
+body.theme-dark .streak-gray-line {
+  background: linear-gradient(to right, #474952, #2a2b32);
+}
+
+/* Track line below the train. */
+body.theme-dark #streak-train-line {
+  background: linear-gradient(to right, #2a2b32, #474952 10%, #474952 90%, #2a2b32);
 }

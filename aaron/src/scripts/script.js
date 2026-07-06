@@ -1,4 +1,4 @@
-import { VIBRANT, PASTEL, TEXT_LIGHT, TEXT_DARK, DARK_TEXT_VIBRANT_INDEX, GREEN, MAX_MISTAKES } from './config.js';
+import { VIBRANT, PASTEL, PASTEL_DARK, TEXT_LIGHT, TEXT_DARK, DARK_TEXT_VIBRANT_INDEX, GREEN, MAX_MISTAKES } from './config.js';
 import { shouldCountMistake, getDayIndex, shuffleArray } from './utils.js';
 
 // Epoch for daily word rotation — all players get the same puzzle on the same day
@@ -63,6 +63,9 @@ let mistakesHistory = {
 }
 let currentPair = [];
 let isProcessing = false;
+// True once revealAllCards() has run, so a later theme toggle can re-apply the
+// loss-state card-back colors (which differ between light and dark modes).
+let cardsRevealed = false;
 
 function showInstructions() {
   if (!localStorage.getItem('hasSeenInstructions')) {
@@ -77,6 +80,32 @@ function showInstructions() {
       if (event.target === instrModal) closeInstr();
     };
   }
+}
+
+/**
+ * Reveals the top/bottom edge gradients on a scrollable sheet only when there
+ * is scrolled-away content on that edge, so a fully-visible sheet shows no
+ * fade. Wires every [data-sheet-scroll] container; the fade elements are the
+ * container's siblings and the toggle classes live on the shared parent card.
+ */
+function initSheetFades() {
+  document.querySelectorAll('[data-sheet-scroll]').forEach(function(el) {
+    var card = el.parentElement;
+    if (!card) return;
+    function update() {
+      var scrollable = el.scrollHeight - el.clientHeight > 1;
+      var atTop = el.scrollTop <= 1;
+      var atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+      card.classList.toggle('show-fade-top', scrollable && !atTop);
+      card.classList.toggle('show-fade-bottom', scrollable && !atBottom);
+    }
+    el.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    // Fires when the sheet goes from display:none to visible (and when its
+    // content changes size), so we don't have to hook every open() path.
+    if (window.ResizeObserver) new ResizeObserver(update).observe(el);
+    update();
+  });
 }
 
 // min game state requires
@@ -283,7 +312,10 @@ function showStatsSheet(won, streakInfo) {
   } else {
     var logo = document.createElement('img');
     logo.className = 'stats-logo';
-    logo.src = won ? '/wordpair-logo-win.svg' : '/wordpair-logo-loss.svg';
+    var darkTheme = document.body.classList.contains('theme-dark');
+    logo.src = won
+      ? (darkTheme ? '/wordpair-logo-win-dark.svg' : '/wordpair-logo-win.svg')
+      : (darkTheme ? '/wordpair-logo-loss-dark.svg' : '/wordpair-logo-loss.svg');
     logo.alt = 'WordPair';
     header.appendChild(logo);
     header.appendChild(el('h2', 'stats-title', won ? 'Congrats!' : 'Game Over!'));
@@ -322,12 +354,14 @@ function showStatsSheet(won, streakInfo) {
     // out a "current" row since there isn't one yet.
     var isCurrentGameBar = gameIsOver && (i === mistakes);
     var barWidth = Math.max(8, (val / maxVal) * 100);
+    // In dark mode the bar track is dark, so every count reads light.
+    var darkTheme = document.body.classList.contains('theme-dark');
     var row = el('div', 'stats-bar-row');
     row.appendChild(el('span', 'stats-bar-label', i));
     var bar = el('div', 'stats-bar' + (isCurrentGameBar ? ' highlight' : ''));
     bar.style.width = barWidth + '%';
     var count = el('span', 'stats-bar-count', val);
-    count.style.color = isCurrentGameBar ? TEXT_LIGHT : TEXT_DARK;
+    count.style.color = (isCurrentGameBar || darkTheme) ? TEXT_LIGHT : TEXT_DARK;
     bar.appendChild(count);
     row.appendChild(bar);
     barsContainer.appendChild(row);
@@ -527,6 +561,7 @@ function initStartScreen() {
 }
 
 initStartScreen();
+initSheetFades();
 
 // Dynamic 3D tilt: the MTA card leans based on where the pointer is over it.
 // Applied to #card-flip-container; the front face is backface-hidden, so only
@@ -702,6 +737,20 @@ function attachCardTilt(card, cardInner) {
     openInstructions();
   });
 
+  // Theme toggle buttons — animate the sun/moon icon swap and apply the
+  // dark color scheme. Both buttons stay visually in sync, and `theme-dark`
+  // on <body> drives the dark-mode color overrides in the stylesheet.
+  var themeButtons = document.querySelectorAll('.theme-toggle-btn');
+  themeButtons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var toDark = !btn.classList.contains('is-dark');
+      themeButtons.forEach(function(b) { b.classList.toggle('is-dark', toDark); });
+      document.body.classList.toggle('theme-dark', toDark);
+      // Re-color already-revealed cards so their backs match the new theme.
+      if (cardsRevealed) applyRevealedCardColors();
+    });
+  });
+
   if (localStorage.getItem('noIntro')) {
     // skip intro
   } else {
@@ -864,21 +913,29 @@ function updateBoard(card1, card2, i1, i2, correct) {
 
 }
 
-function revealAllCards() {
-  var won = (WORDS.length === finished.size);
-
+// Apply the loss-state (pastel) colors to every unmatched card back, picking the
+// palette for the active theme. Safe to re-run — used both on reveal and when the
+// theme is toggled afterwards so the revealed cards switch light/dark colors.
+function applyRevealedCardColors() {
+  var darkTheme = document.body.classList.contains('theme-dark');
+  var palette = darkTheme ? PASTEL_DARK : PASTEL;
   var cardInners = document.querySelectorAll('#game-board .card-inner');
   cardInners.forEach(function(inner, i) {
-    inner.classList.add('flipCard');
-    if (!finished.has(i)) {
-      var back = inner.querySelector('.card-back');
-      var colorIdx = getPairIndex(i) % PASTEL.length;
-      back.style.backgroundColor = PASTEL[colorIdx];
-      back.style.color = TEXT_DARK;
-    } else if (won) {
-      // Won: all cards already have vibrant from matching, nothing to do
-    }
+    if (finished.has(i)) return; // matched cards keep their vibrant color
+    var back = inner.querySelector('.card-back');
+    var colorIdx = getPairIndex(i) % palette.length;
+    back.style.backgroundColor = palette[colorIdx];
+    back.style.color = darkTheme ? TEXT_LIGHT : TEXT_DARK;
   });
+}
+
+function revealAllCards() {
+  var cardInners = document.querySelectorAll('#game-board .card-inner');
+  cardInners.forEach(function(inner) {
+    inner.classList.add('flipCard');
+  });
+  applyRevealedCardColors();
+  cardsRevealed = true;
 }
 
 function endGame(animate, mistakes, prevStreak, newStreak) {

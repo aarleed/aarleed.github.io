@@ -32,7 +32,8 @@ import "../styles/style.css";
                     <path d="M6 6L18 18M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
             </button>
-            <div class="instructions-sheet-body">
+            <div class="sheet-fade sheet-fade--top" aria-hidden="true"></div>
+            <div class="instructions-sheet-body" data-sheet-scroll>
                 <header class="instructions-block instructions-heading-block">
                     <h2 id="instructions-heading" class="instructions-h2">How to Play</h2>
                     <p class="instructions-lead">Flip over cards and match related words into pairs.</p>
@@ -70,6 +71,7 @@ import "../styles/style.css";
                     </div>
                 </section>
             </div>
+            <div class="sheet-fade sheet-fade--bottom" aria-hidden="true"></div>
         </div>
     </div>
 

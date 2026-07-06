@@ -72,6 +72,33 @@ function showInstructions() {
   }
 }
 
+/**
+ * Reveals the top/bottom edge gradients on a scrollable sheet only when there
+ * is scrolled-away content on that edge, so a fully-visible sheet shows no
+ * fade. The fade elements are the container's siblings and the toggle classes
+ * live on the shared parent card.
+ */
+function initSheetFades() {
+  document.querySelectorAll('[data-sheet-scroll]').forEach(function(el) {
+    var card = el.parentElement;
+    if (!card) return;
+    function update() {
+      var scrollable = el.scrollHeight - el.clientHeight > 1;
+      var atTop = el.scrollTop <= 1;
+      var atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+      card.classList.toggle('show-fade-top', scrollable && !atTop);
+      card.classList.toggle('show-fade-bottom', scrollable && !atBottom);
+    }
+    el.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    // Fires when the sheet goes from display:none to visible, so we don't have
+    // to hook every open() path.
+    if (window.ResizeObserver) new ResizeObserver(update).observe(el);
+    update();
+  });
+}
+initSheetFades();
+
 // min game state requires
 // TODO: reset board after 12am
 
