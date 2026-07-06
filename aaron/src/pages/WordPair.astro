@@ -21,10 +21,23 @@ import "../styles/style.css";
 </head>
 <body>
     <div id="start-screen">
+        <button type="button" id="start-theme-btn" class="game-icon-btn theme-toggle-btn" aria-label="Toggle theme">
+            <span class="theme-icon-wrap" aria-hidden="true">
+                <svg class="game-icon theme-icon theme-icon--sun" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 2V4M12 20V22M4 12H2M22 12H20M6.34 6.34L4.93 4.93M19.07 19.07L17.66 17.66M17.66 6.34L19.07 4.93M4.93 19.07L6.34 17.66" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg class="game-icon theme-icon theme-icon--moon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
+            <span class="game-tooltip" aria-hidden="true">Theme</span>
+        </button>
         <div id="start-screen-content">
             <div id="start-screen-heading">
                 <div id="start-logo-title">
                     <img id="start-icon" src="/wordpair-logo.svg" alt="WordPair logo" />
+                    <img id="start-icon-dark" src="/wordpair-logo-dark.svg" alt="WordPair logo" />
                     <div id="start-title">WordPair</div>
                 </div>
                 <p id="start-subtitle"></p>
@@ -73,7 +86,8 @@ import "../styles/style.css";
                 </svg>
                 <span class="game-tooltip" aria-hidden="true">Close</span>
             </button>
-            <div class="instructions-sheet-body">
+            <div class="sheet-fade sheet-fade--top" aria-hidden="true"></div>
+            <div class="instructions-sheet-body" data-sheet-scroll>
                 <header class="instructions-block instructions-heading-block">
                     <h2 id="instructions-heading" class="instructions-h2">How to Play</h2>
                     <p class="instructions-lead">Flip over cards and match related words into pairs.</p>
@@ -111,6 +125,7 @@ import "../styles/style.css";
                     </div>
                 </section>
             </div>
+            <div class="sheet-fade sheet-fade--bottom" aria-hidden="true"></div>
         </div>
     </div>
 
@@ -148,7 +163,8 @@ import "../styles/style.css";
                 </div>
 
             </div>
-            <div id="stats-sheet-content">
+            <div class="sheet-fade sheet-fade--top" aria-hidden="true"></div>
+            <div id="stats-sheet-content" data-sheet-scroll>
                 <div id="stats-header"></div>
                 <div id="stats-grid" class="stats-grid"></div>
                 <div id="stats-distribution">
@@ -160,6 +176,7 @@ import "../styles/style.css";
                     <div id="stats-pairs"></div>
                 </div>
             </div>
+            <div class="sheet-fade sheet-fade--bottom" aria-hidden="true"></div>
         </div>
     </div>
     <div id="game-main">
@@ -171,6 +188,18 @@ import "../styles/style.css";
                 <span class="game-tooltip" aria-hidden="true">Back</span>
             </button>
             <div id="game-icon-btns">
+                <button type="button" id="game-theme-btn" class="game-icon-btn theme-toggle-btn" aria-label="Toggle theme">
+                    <span class="theme-icon-wrap" aria-hidden="true">
+                        <svg class="game-icon theme-icon theme-icon--sun" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 2V4M12 20V22M4 12H2M22 12H20M6.34 6.34L4.93 4.93M19.07 19.07L17.66 17.66M17.66 6.34L19.07 4.93M4.93 19.07L6.34 17.66" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <svg class="game-icon theme-icon theme-icon--moon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span class="game-tooltip" aria-hidden="true">Theme</span>
+                </button>
                 <button type="button" id="game-stats-btn" class="game-icon-btn" aria-label="Statistics">
                     <svg class="game-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <path d="M18 20V10M12 20V4M6 20V14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
