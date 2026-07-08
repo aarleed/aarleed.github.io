@@ -1,5 +1,5 @@
 import { VIBRANT, PASTEL, PASTEL_DARK, TEXT_LIGHT, TEXT_DARK, DARK_TEXT_VIBRANT_INDEX, GREEN, MAX_MISTAKES } from './config.js';
-import { shouldCountMistake, getDayIndex, shuffleArray } from './utils.js';
+import { shouldCountMistake, getDayIndex, shuffleArray, calculateWinPerc } from './utils.js';
 
 // Epoch for daily word rotation — all players get the same puzzle on the same day
 const WORD_PAIR_EPOCH = new Date(2025, 4, 1); // May 1, 2025
@@ -323,7 +323,7 @@ function showStatsSheet(won, streakInfo) {
 
   // Stats grid
   var totalPlayed = Object.values(mistakesHistory).reduce(function(a, b) { return a + b; }, 0);
-  var winPerc = totalPlayed > 0 ? Math.round(calculateWinPerc(mistakesHistory)) : 0;
+  var winPerc = totalPlayed > 0 ? Math.round(calculateWinPerc(mistakesHistory, MAX_MISTAKES)) : 0;
   var currentStreak = parseInt(localStorage.getItem('streakCurrent')) || 0;
   var maxStreak = parseInt(localStorage.getItem('streakMax')) || 0;
   var grid = document.getElementById('stats-grid');
@@ -482,25 +482,6 @@ function playStreakAnimation(prevStreak, newStreak) {
 
 
 
-function calculateWinPerc(mistakesHistory) {
-  // Calculate the sum of keys 1-6
-  let sumKeys1To6 = 0;
-  for (let key in mistakesHistory) {
-    if (parseInt(key) >= 0 && parseInt(key) <= 6) {
-      sumKeys1To6 += mistakesHistory[key];
-    }
-  }
-
-  // Calculate the total sum of all keys
-  let totalSum = 0;
-  for (let key in mistakesHistory) {
-    totalSum += mistakesHistory[key];
-  }
-
-  // Calculate the win percentage
-  let winPercentage = sumKeys1To6 / totalSum * 100;
-  return winPercentage
-}
 
 function formatStartDateOrdinal(date) {
   var month = date.toLocaleString('en-US', { month: 'long' });
