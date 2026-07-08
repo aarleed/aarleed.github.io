@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { shouldCountMistake, getDayIndex, shuffleArray, seededRandom } from './utils.js';
+import { shouldCountMistake, getDayIndex, shuffleArray, seededRandom, calculateWinPerc } from './utils.js';
 
 describe('shouldCountMistake — full truth table', () => {
   // Matched pairs are never mistakes regardless of whether the cards
@@ -176,5 +176,53 @@ describe('shuffleArray', () => {
     // expect well under 5% (almost certainly 0–1). The buggy old version
     // produced "all adjacent" for the majority of seeds.
     expect(allAdjacentCount).toBeLessThan(25);
+  });
+});
+
+
+describe('calculateWinPerc', () => {
+  const MAX = 6; // matches MAX_MISTAKES in config.js
+
+  it('returns 0 when no games have been played', () => {
+    const history = { "0:":0, "1:":0, "2:":0, "3:":0, "4:":0, "5:":0, "6:":0, "7+:":0 };
+    expect(calculateWinPerc(history, MAX)).toBe(0);
+  });
+
+  it('counts games with 0-5 mistakes as wins', () => {
+    // 2 wins (0 mistakes, 3 mistakes), 0 losses
+    const history = { "0:":1, "1:":0, "2:":0, "3:":1, "4:":0, "5:":0, "6:":0, "7+:":0 };
+    expect(calculateWinPerc(history, MAX)).toBe(100);
+  });
+
+  it('counts games with exactly 6 mistakes as losses (regression)', () => {
+    // This is the bug: the old code used <= 6 which counted "6:" as a win.
+    // 4 wins (0-5 mistakes), 2 losses (6 mistakes)
+    const history = { "0:":1, "1:":0, "2:":0, "3:":1, "4:":1, "5:":1, "6:":2, "7+:":0 };
+    // wins = 1+0+0+1+1+1 = 4, total = 4+2 = 6, win% = 4/6*100 ≈ 66.67
+    expect(calculateWinPerc(history, MAX)).toBeCloseTo(66.67, 1);
+  });
+
+  it('counts 7+ bucket as losses', () => {
+    // Legacy bucket — should NOT count as wins
+    const history = { "0:":1, "1:":0, "2:":0, "3:":0, "4:":0, "5:":0, "6:":0, "7+:":5 };
+    // wins = 1, total = 6, win% = 1/6*100 ≈ 16.67
+    expect(calculateWinPerc(history, MAX)).toBeCloseTo(16.67, 1);
+  });
+
+  it('real-world example: history {0:1, 3:1, 4:1, 5:1, 6:2, 7+:5} → 36%', () => {
+    // From the user's actual stats earlier in this project
+    const history = { "0:":1, "1:":0, "2:":0, "3:":1, "4:":1, "5:":1, "6:":2, "7+:":5 };
+    // wins = 4, total = 11, win% = 4/11*100 ≈ 36.36
+    expect(calculateWinPerc(history, MAX)).toBeCloseTo(36.36, 1);
+  });
+
+  it('100% when all games won with 0 mistakes', () => {
+    const history = { "0:":10, "1:":0, "2:":0, "3:":0, "4:":0, "5:":0, "6:":0, "7+:":0 };
+    expect(calculateWinPerc(history, MAX)).toBe(100);
+  });
+
+  it('0% when all games are losses', () => {
+    const history = { "0:":0, "1:":0, "2:":0, "3:":0, "4:":0, "5:":0, "6:":5, "7+:":3 };
+    expect(calculateWinPerc(history, MAX)).toBe(0);
   });
 });

@@ -81,3 +81,29 @@ export function shuffleArray(array, seed) {
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
+
+
+/**
+ * Calculates win percentage from the mistakes-distribution history object.
+ *
+ * A win = finishing all pairs with fewer than maxMistakes mistakes.
+ * Games in the maxMistakes bucket (e.g. "6:") are losses — the game ended
+ * because the player hit the mistake cap, not because they found all pairs.
+ * The legacy "7+:" bucket is also counted as losses.
+ *
+ * @param {Object} history     - e.g. {"0:":1, "1:":2, ..., "6:":3, "7+:":0}
+ * @param {number} maxMistakes - the mistake cap (games at this count are losses)
+ * @returns {number} percentage in [0, 100], or 0 if no games played
+ */
+export function calculateWinPerc(history, maxMistakes) {
+  let wins = 0;
+  let totalPlayed = 0;
+  for (const key in history) {
+    const mistakeCount = parseInt(key);
+    totalPlayed += history[key];
+    if (mistakeCount >= 0 && mistakeCount < maxMistakes) {
+      wins += history[key];
+    }
+  }
+  return totalPlayed === 0 ? 0 : (wins / totalPlayed) * 100;
+}
