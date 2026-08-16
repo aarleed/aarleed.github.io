@@ -181,14 +181,39 @@ function isDiffDay(date1, date2) {
   return year2 != year1 || month2 != month1 || day2 != day1;
 }
 
+/**
+ * Shrinks the inline font-size of `el` so its child <span> fits within
+ * el's content-box width.
+ *
+ * Strategy: text width scales linearly with font size, so we measure the
+ * natural width once and compute the largest font size that fits as a
+ * single ratio. O(1) measurement per call instead of N forced reflows
+ * from a decremental loop. A 2% safety margin guards against subpixel
+ * rounding pushing the text just over the edge.
+ *
+ * Idempotent: clears any prior inline font-size before measuring, so
+ * repeated calls (e.g. from a ResizeObserver on viewport changes) re-fit
+ * cleanly instead of ratcheting smaller and smaller each time.
+ */
+const FIT_TEXT_MIN_PX = 6;
 function fitText(el) {
-  let span = el.querySelector('span');
+  const span = el.querySelector('span');
   if (!span) return;
-  let fontSize = parseFloat(getComputedStyle(el).fontSize);
-  while (span.scrollWidth > el.clientWidth && fontSize > 8) {
-    fontSize -= 0.5;
-    el.style.fontSize = fontSize + 'px';
-  }
+  // Reset to the cascade-defined size so getComputedStyle reflects the
+  // CSS clamp() base, not whatever inline value we set on a previous run.
+  el.style.fontSize = '';
+  const baseFontSize = parseFloat(getComputedStyle(el).fontSize);
+  const containerWidth = el.clientWidth;
+  const naturalWidth = span.scrollWidth;
+  // Element isn't laid out yet (display:none, hidden ancestor, etc).
+  // ResizeObserver will call us again once layout becomes valid.
+  if (containerWidth === 0 || naturalWidth === 0) return;
+  if (naturalWidth <= containerWidth) return; // already fits at base size
+  const target = Math.max(
+    FIT_TEXT_MIN_PX,
+    baseFontSize * (containerWidth / naturalWidth) * 0.98,
+  );
+  el.style.fontSize = target + 'px';
 }
 
 function initState(previous) {
@@ -230,7 +255,18 @@ function initState(previous) {
     }
     board.appendChild(card);
   }
-  board.querySelectorAll('.card-back').forEach(fitText);
+  // Re-fit any card-back's text when the card itself resizes (orientation
+  // change, browser resize, devtools toggle, etc.). ResizeObserver fires
+  // once immediately for each observed element, which handles the initial
+  // fit too — no separate forEach(fitText) call needed.
+  const cardResizeObserver = new ResizeObserver(function(entries) {
+    for (const entry of entries) {
+      fitText(entry.target);
+    }
+  });
+  board.querySelectorAll('.card-back').forEach(function(el) {
+    cardResizeObserver.observe(el);
+  });
 }
 
 /**

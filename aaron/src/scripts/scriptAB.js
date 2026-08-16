@@ -159,14 +159,24 @@ function isDiffDay(date1, date2) {
     date1.getDate() !== date2.getDate();
 }
 
+/**
+ * See script.js — same ratio-based, idempotent fit-to-container shrinker.
+ */
+const FIT_TEXT_MIN_PX = 6;
 function fitText(el) {
-  let span = el.querySelector('span');
+  const span = el.querySelector('span');
   if (!span) return;
-  let fontSize = parseFloat(getComputedStyle(el).fontSize);
-  while (span.scrollWidth > el.clientWidth && fontSize > 8) {
-    fontSize -= 0.5;
-    el.style.fontSize = fontSize + 'px';
-  }
+  el.style.fontSize = '';
+  const baseFontSize = parseFloat(getComputedStyle(el).fontSize);
+  const containerWidth = el.clientWidth;
+  const naturalWidth = span.scrollWidth;
+  if (containerWidth === 0 || naturalWidth === 0) return;
+  if (naturalWidth <= containerWidth) return;
+  const target = Math.max(
+    FIT_TEXT_MIN_PX,
+    baseFontSize * (containerWidth / naturalWidth) * 0.98,
+  );
+  el.style.fontSize = target + 'px';
 }
 
 function initState(previous) {
@@ -179,6 +189,14 @@ function initState(previous) {
     if (localStorage.getItem('history') != null) {mistakesHistory = JSON.parse(localStorage.getItem('history'))}
   }
   let board = document.getElementById("game-board");
+  // Single ResizeObserver for all cards. Fires once per element on observe()
+  // (handles initial fit) and on every subsequent size change (handles
+  // orientation/viewport changes).
+  const cardResizeObserver = new ResizeObserver(function(entries) {
+    for (const entry of entries) {
+      fitText(entry.target);
+    }
+  });
   for (let i = 0; i < NUMBER_OF_GUESSES; i++) {
     let row = document.createElement("div");
     row.className = "letter-row";
@@ -213,7 +231,9 @@ function initState(previous) {
       row.appendChild(card);
     }
     board.appendChild(row);
-    row.querySelectorAll('.card-back').forEach(fitText);
+    row.querySelectorAll('.card-back').forEach(function(el) {
+      cardResizeObserver.observe(el);
+    });
   }
 }
 
