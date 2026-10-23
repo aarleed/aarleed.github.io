@@ -107,3 +107,46 @@ export function calculateWinPerc(history, maxMistakes) {
   }
   return totalPlayed === 0 ? 0 : (wins / totalPlayed) * 100;
 }
+
+/**
+ * Formats a Date as a local-time "YYYY-MM-DD" string. Local (not UTC) so a
+ * "day" matches the player's own midnight.
+ *
+ * @param {Date} d
+ * @returns {string}
+ */
+export function toLocalDateStr(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+/**
+ * Computes the streak after the player completes today's puzzle (win or
+ * loss — the streak counts consecutive days played, not wins).
+ *
+ * @param {string|null} lastPlayDateStr - "YYYY-MM-DD" of the last completed game, or null
+ * @param {number} currentStreak        - streak before this game
+ * @param {Date} now                    - when the game was completed
+ * @returns {number} the new streak
+ */
+export function nextStreak(lastPlayDateStr, currentStreak, now) {
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  if (lastPlayDateStr === toLocalDateStr(now)) return currentStreak; // already counted today
+  if (lastPlayDateStr === toLocalDateStr(yesterday)) return currentStreak + 1;
+  return 1; // first game ever, or a gap of 2+ days
+}
+
+/**
+ * Returns true if the board was loaded on an earlier local day than `now`.
+ * The board only resets on page load, so a tab left open past midnight
+ * (common on phones, which resume tabs instead of reloading) would otherwise
+ * keep showing yesterday's finished game — the player can't complete today's
+ * puzzle and their streak never continues.
+ *
+ * @param {string} boardDateStr - "YYYY-MM-DD" the board was loaded for
+ * @param {Date} now
+ * @returns {boolean}
+ */
+export function isBoardStale(boardDateStr, now) {
+  return boardDateStr !== toLocalDateStr(now);
+}

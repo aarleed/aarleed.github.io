@@ -1,5 +1,5 @@
 import { VIBRANT, PASTEL, PASTEL_DARK, TEXT_LIGHT, TEXT_DARK, DARK_TEXT_VIBRANT_INDEX, GREEN, MAX_MISTAKES } from './config.js';
-import { shouldCountMistake, getDayIndex, shuffleArray, calculateWinPerc } from './utils.js';
+import { shouldCountMistake, getDayIndex, shuffleArray, calculateWinPerc, toLocalDateStr, nextStreak, isBoardStale } from './utils.js';
 
 // Epoch for daily word rotation — all players get the same puzzle on the same day
 const WORD_PAIR_EPOCH = new Date(2025, 4, 1); // May 1, 2025
@@ -109,7 +109,24 @@ function initSheetFades() {
 }
 
 // min game state requires
-// TODO: reset board after 12am
+// Local date ("YYYY-MM-DD") the current board was loaded for.
+let boardDateStr = null;
+
+// Reload once the day rolls over so a tab left open overnight gets today's
+// puzzle (see isBoardStale). Otherwise the player is stuck on yesterday's
+// finished board and their streak can't continue.
+function reloadIfBoardStale() {
+  if (boardDateStr !== null && isBoardStale(boardDateStr, new Date())) {
+    location.reload();
+  }
+}
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'visible') reloadIfBoardStale();
+});
+window.addEventListener('pageshow', function (e) {
+  if (e.persisted) reloadIfBoardStale(); // restored from back/forward cache
+});
+window.addEventListener('focus', reloadIfBoardStale);
 
 function getDateInt(date) {
   const year = date.getFullYear();
@@ -122,6 +139,7 @@ function getDateInt(date) {
 function initBoard() {
   let lastDate = localStorage.getItem('currentDate');
   const currentDate = new Date()
+  boardDateStr = toLocalDateStr(currentDate);
   let currentDateInt = getDateInt(currentDate);
   shuffleArray(WORDS, currentDateInt)
   buildPairIndexes();
@@ -956,33 +974,16 @@ function removeAllListeners () {
   });
 }
 
-function toLocalDateStr(d) {
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-
 function recordDailyStreak() {
   let currentStreak = parseInt(localStorage.getItem('streakCurrent')) || 0;
   let maxStreak = parseInt(localStorage.getItem('streakMax')) || 0;
   let lastPlayDate = localStorage.getItem('lastWinDate'); // legacy key name kept for backward compat
 
   let today = new Date();
-  let todayStr = toLocalDateStr(today);
-  let yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  let yesterdayStr = toLocalDateStr(yesterday);
-
-  if (lastPlayDate === todayStr) {
-    // Already counted today — don't double-increment.
-  } else if (lastPlayDate === yesterdayStr) {
-    // Played yesterday AND today → streak continues.
-    currentStreak += 1;
-  } else {
-    // Gap of 2+ days (or first ever game) → start fresh.
-    currentStreak = 1;
-  }
+  currentStreak = nextStreak(lastPlayDate, currentStreak, today);
 
   maxStreak = Math.max(maxStreak, currentStreak);
-  localStorage.setItem('lastWinDate', todayStr); // legacy key name
+  localStorage.setItem('lastWinDate', toLocalDateStr(today)); // legacy key name
   localStorage.setItem('streakCurrent', currentStreak);
   localStorage.setItem('streakMax', maxStreak);
   return { currentStreak, maxStreak };

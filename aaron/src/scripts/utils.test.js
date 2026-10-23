@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { shouldCountMistake, getDayIndex, shuffleArray, seededRandom, calculateWinPerc } from './utils.js';
+import { shouldCountMistake, getDayIndex, shuffleArray, seededRandom, calculateWinPerc, toLocalDateStr, nextStreak, isBoardStale } from './utils.js';
 
 describe('shouldCountMistake — full truth table', () => {
   // Matched pairs are never mistakes regardless of whether the cards
@@ -224,5 +224,53 @@ describe('calculateWinPerc', () => {
   it('0% when all games are losses', () => {
     const history = { "0:":0, "1:":0, "2:":0, "3:":0, "4:":0, "5:":0, "6:":5, "7+:":3 };
     expect(calculateWinPerc(history, MAX)).toBe(0);
+  });
+});
+
+describe('nextStreak — consecutive days played', () => {
+  // Local-time dates, same as the game uses.
+  const at = (y, m, d, h = 12) => new Date(y, m, d, h);
+
+  it('played yesterday → streak continues from 1 to 2 today', () => {
+    expect(nextStreak('2026-10-20', 1, at(2026, 9, 21))).toBe(2);
+  });
+
+  it('first game ever → 0 becomes 1', () => {
+    expect(nextStreak(null, 0, at(2026, 9, 21))).toBe(1);
+  });
+
+  it('already completed today → no double count', () => {
+    expect(nextStreak('2026-10-21', 3, at(2026, 9, 21))).toBe(3);
+  });
+
+  it('gap of 2+ days → resets to 1', () => {
+    expect(nextStreak('2026-10-19', 5, at(2026, 9, 21))).toBe(1);
+  });
+
+  it('continues across month and year boundaries', () => {
+    expect(nextStreak('2026-10-31', 4, at(2026, 10, 1))).toBe(5);
+    expect(nextStreak('2026-12-31', 4, at(2027, 0, 1))).toBe(5);
+  });
+
+  it('continues when played late yesterday and early today', () => {
+    expect(nextStreak(toLocalDateStr(at(2026, 9, 20, 23)), 1, at(2026, 9, 21, 0))).toBe(2);
+  });
+});
+
+describe('isBoardStale — tab left open past midnight', () => {
+  const at = (y, m, d, h) => new Date(y, m, d, h);
+
+  it('same day → board is current', () => {
+    expect(isBoardStale('2026-10-21', at(2026, 9, 21, 23))).toBe(false);
+  });
+
+  it('board loaded yesterday → stale, so the page reloads for today and the streak can go 1 → 2', () => {
+    // Regression: played and finished yesterday, phone resumed the tab today
+    // without reloading. The board stayed on yesterday's finished game so
+    // today's puzzle could never be completed and the streak stuck at 1.
+    const boardDate = toLocalDateStr(at(2026, 9, 20, 21));
+    const today = at(2026, 9, 21, 9);
+    expect(isBoardStale(boardDate, today)).toBe(true);
+    expect(nextStreak(boardDate, 1, today)).toBe(2);
   });
 });
